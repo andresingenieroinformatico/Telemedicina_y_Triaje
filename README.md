@@ -32,7 +32,7 @@ La API soporta dos métodos de autenticación para facilitar la integración con
 | Fechas           | 22-05-2026 → 05-06-2026                  |
 | Metodología      | Scrum                                    |
 | Tecnología       | Python · Flask · PostgreSQL / SQLite · SQLAlchemy |
-| Grupo            | Darwin, Juan, Juantin                    |
+| Grupo | Darwin García, Juan José Figueroa Ayala |
 
 ---
 
