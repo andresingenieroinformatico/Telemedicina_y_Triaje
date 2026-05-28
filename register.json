@@ -1,0 +1,10 @@
+﻿{
+    "data":  {
+                 "email":  "inttest_auto@example.com",
+                 "id":  1,
+                 "rol":  "PACIENTE",
+                 "username":  "inttest_auto"
+             },
+    "message":  "Usuario registrado exitosamente.",
+    "success":  true
+}
