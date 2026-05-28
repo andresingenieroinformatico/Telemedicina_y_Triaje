@@ -8,15 +8,23 @@ def calcular_nivel_triage(sintomas, signos_vitales):
     temperatura = signos_vitales.get('temperatura', 37.0)
     ritmo_cardiaco = signos_vitales.get('frecuencia_cardiaca', 80)
 
-    sintomas_criticos = ['pecho', 'respirar', 'desmayo', 'inconsciente']
-    if any(p in sintomas_texto for p in sintomas_criticos) or ritmo_cardiaco > 120 or temperatura > 40.0:
+    criticos_n1 = ['inconsciente', 'paro', 'asfixia', 'convulsion']
+    if any(p in sintomas_texto for p in criticos_n1) or ritmo_cardiaco > 140 or temperatura > 41.0 or saturacion_oxigeno < 85:
         return 1
 
-    sintomas_medios = ['dolor', 'fractura', 'corte', 'vomito']
-    if any(p in sintomas_texto for p in sintomas_medios) or temperatura > 38.5:
+    criticos_n2 = ['pecho', 'respirar', 'desmayo', 'hemorragia', 'infarto']
+    if any(p in sintomas_texto for p in criticos_n2) or ritmo_cardiaco > 120 or temperatura > 39.5 or saturacion_oxigeno < 90:
         return 2
 
-    return 3
+    medios_n3 = ['fractura', 'deshidratacion', 'abdomoninal', 'vomito', 'dolor agudo']
+    if any(p in sintomas_texto for p in medios_n3) or temperatura > 38.5 or ritmo_cardiaco > 100:
+        return 3
+
+    leves_n4 = ['dolor', 'corte', 'esguince', 'diarrea', 'fiebre']
+    if any(p in sintomas_texto for p in leves_n4) or temperatura > 37.5:
+        return 4
+
+    return 5
 
 @triage_bp.route('/triage', methods=['POST'])
 def recibir_triage():
