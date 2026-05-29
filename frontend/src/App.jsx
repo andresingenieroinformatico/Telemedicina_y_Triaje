@@ -18,7 +18,6 @@ setupAxiosInterceptors();
  */
 const Navigation = () => {
     const { isAuthenticated, user, logout } = useAuth();
-    const roleLabel = user?.role === 'medico' ? 'Médico' : user?.role === 'paciente' ? 'Paciente' : 'Usuario';
     const navigate = useNavigate();
 
     const handleLogout = async () => {
