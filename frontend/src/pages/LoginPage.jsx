@@ -9,6 +9,7 @@ import { Alert, Button, Input, FormGroup, Spinner } from '../components/UICompon
 const LoginPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [role, setRole] = useState('paciente');
     const [errors, setErrors] = useState({});
     const { login, loading, error: authError, isAuthenticated } = useAuth();
     const navigate = useNavigate();
@@ -40,7 +41,7 @@ const LoginPage = () => {
         }
 
         try {
-            await login(username, password);
+            await login(username, password, role);
             navigate('/');
         } catch (err) {
             console.error('Error de login:', err);
@@ -65,6 +66,18 @@ const LoginPage = () => {
                 {authError && <Alert type="error" message={authError} />}
 
                 <form onSubmit={handleLogin}>
+                    <div style={{ marginBottom: '12px' }}>
+                        <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Ingresar como</label>
+                        <select
+                            value={role}
+                            onChange={(e) => setRole(e.target.value)}
+                            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ced4da' }}
+                        >
+                            <option value="paciente">Paciente</option>
+                            <option value="medico">Médico</option>
+                        </select>
+                    </div>
+
                     <Input
                         label="Usuario"
                         type="text"
@@ -72,7 +85,7 @@ const LoginPage = () => {
                         onChange={(e) => setUsername(e.target.value)}
                         error={errors.username}
                         required
-                        placeholder="Ingrese su usuario"
+                        placeholder={role === 'medico' ? 'medico@telemedicina' : 'paciente@telemedicina'}
                     />
 
                     <Input
@@ -101,8 +114,8 @@ const LoginPage = () => {
             </FormGroup>
 
             <div style={{ marginTop: '20px', textAlign: 'center', color: '#666', fontSize: '14px' }}>
-                <p>Usuario de prueba: <strong>admin</strong></p>
-                <p>Contraseña: <strong>password</strong></p>
+                <p>Modo demo: puedes entrar como <strong>Paciente</strong> o <strong>Médico</strong> sin depender del backend aún.</p>
+                <p>Ejemplo: usuario <strong>paciente</strong> o <strong>medico</strong> con cualquier contraseña de 4+ caracteres.</p>
             </div>
         </div>
     );

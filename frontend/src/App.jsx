@@ -18,6 +18,7 @@ setupAxiosInterceptors();
  */
 const Navigation = () => {
     const { isAuthenticated, user, logout } = useAuth();
+    const roleLabel = user?.role === 'medico' ? 'Médico' : user?.role === 'paciente' ? 'Paciente' : 'Usuario';
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -31,20 +32,18 @@ const Navigation = () => {
                 <Link to="/" className="nav-brand" style={{ color: 'white', marginRight: '8px', textDecoration: 'none', fontSize: '16px', fontWeight: '700' }}>
                     🏥 Telemedicina
                 </Link>
-                {isAuthenticated && (
+                {isAuthenticated && user?.role === 'paciente' && (
                     <>
-                        <Link to="/triage" className="nav-link" style={{ color: 'white', textDecoration: 'none' }}>
-                            Triaje
-                        </Link>
-                        <Link to="/agendamientos" className="nav-link" style={{ color: 'white', textDecoration: 'none' }}>
-                            Agendamientos
-                        </Link>
-                        <Link to="/usuarios" className="nav-link" style={{ color: 'white', textDecoration: 'none' }}>
-                            Usuarios
-                        </Link>
-                        <Link to="/historial-medico" className="nav-link" style={{ color: 'white', textDecoration: 'none' }}>
-                            Historial Médico
-                        </Link>
+                        <Link to="/triage" className="nav-link" style={{ color: 'white', textDecoration: 'none' }}>Triage</Link>
+                        <Link to="/agendamientos" className="nav-link" style={{ color: 'white', textDecoration: 'none' }}>Mis Citas</Link>
+                        <Link to="/historial-medico" className="nav-link" style={{ color: 'white', textDecoration: 'none' }}>Mi Historial</Link>
+                    </>
+                )}
+                {isAuthenticated && user?.role === 'medico' && (
+                    <>
+                        <Link to="/triage" className="nav-link" style={{ color: 'white', textDecoration: 'none' }}>Pacientes en Triage</Link>
+                        <Link to="/agendamientos" className="nav-link" style={{ color: 'white', textDecoration: 'none' }}>Agenda</Link>
+                        <Link to="/usuarios" className="nav-link" style={{ color: 'white', textDecoration: 'none' }}>Usuarios</Link>
                     </>
                 )}
             </div>
@@ -91,7 +90,7 @@ const MainApp = () => {
                     <Route
                         path="/triage"
                         element={
-                            <ProtectedRoute>
+                            <ProtectedRoute allowedRoles={['paciente', 'medico']}>
                                 <TriagePage />
                             </ProtectedRoute>
                         }
@@ -99,7 +98,7 @@ const MainApp = () => {
                     <Route
                         path="/agendamientos"
                         element={
-                            <ProtectedRoute>
+                            <ProtectedRoute allowedRoles={['paciente', 'medico']}>
                                 <AgendamientoPage />
                             </ProtectedRoute>
                         }
@@ -107,7 +106,7 @@ const MainApp = () => {
                     <Route
                         path="/usuarios"
                         element={
-                            <ProtectedRoute>
+                            <ProtectedRoute allowedRoles={['medico']}>
                                 <UsuariosPage />
                             </ProtectedRoute>
                         }
@@ -115,7 +114,7 @@ const MainApp = () => {
                     <Route
                         path="/historial-medico"
                         element={
-                            <ProtectedRoute>
+                            <ProtectedRoute allowedRoles={['paciente', 'medico']}>
                                 <HistorialMedicoPage />
                             </ProtectedRoute>
                         }
