@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Alert, Button, Input, FormGroup, Spinner } from '../components/UIComponents';
 
 const LoginPage = () => {
-    const [mode, setMode] = useState('login');
+    const location = useLocation();
+    const initialMode = new URLSearchParams(location.search).get('mode') === 'register' ? 'register' : 'login';
+    const [mode, setMode] = useState(initialMode);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');

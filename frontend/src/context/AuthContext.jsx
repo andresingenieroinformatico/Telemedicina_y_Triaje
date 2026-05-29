@@ -7,9 +7,6 @@ import MedicoService from '../services/medico.service';
 import EspecialidadService from '../services/especialidad.service';
 import DisponibilidadService from '../services/disponibilidad.service';
 
-/**
- * Contexto de autenticación global
- */
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -19,7 +16,6 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     const setAuthToken = useCallback((token, role = 'paciente') => {
-
         if (token) {
             localStorage.setItem('auth_token', token);
             localStorage.setItem('user_role', role);
@@ -30,28 +26,30 @@ export const AuthProvider = ({ children }) => {
             EspecialidadService.setAuthToken(token);
             DisponibilidadService.setAuthToken(token);
             setIsAuthenticated(true);
-        } else {
-            localStorage.removeItem('auth_token');
-            localStorage.removeItem('user_role');
-            AgendamientoService.setAuthToken(null);
-            UsuarioService.setAuthToken(null);
-            PacienteService.setAuthToken(null);
-            MedicoService.setAuthToken(null);
-            EspecialidadService.setAuthToken(null);
-            DisponibilidadService.setAuthToken(null);
-            setIsAuthenticated(false);
+            return;
         }
+
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('user_role');
+        localStorage.removeItem('user_name');
+        AgendamientoService.setAuthToken(null);
+        UsuarioService.setAuthToken(null);
+        PacienteService.setAuthToken(null);
+        MedicoService.setAuthToken(null);
+        EspecialidadService.setAuthToken(null);
+        DisponibilidadService.setAuthToken(null);
+        setIsAuthenticated(false);
     }, []);
 
-    // Verificar autenticación al montar
     useEffect(() => {
         const token = localStorage.getItem('auth_token');
         const storedRole = localStorage.getItem('user_role') || 'paciente';
+
         if (token) {
-            setIsAuthenticated(true);
             setAuthToken(token, storedRole);
             setUser({ username: localStorage.getItem('user_name') || 'Usuario', role: storedRole });
         }
+
         setLoading(false);
     }, [setAuthToken]);
 
@@ -60,8 +58,8 @@ export const AuthProvider = ({ children }) => {
             setLoading(true);
             setError(null);
             const response = await AuthService.login(username, password);
-
             const userRole = role || response.user_info?.role || response.role || 'paciente';
+
             if (response.access_token) {
                 setAuthToken(response.access_token, userRole);
                 setUser({
@@ -71,6 +69,7 @@ export const AuthProvider = ({ children }) => {
                 });
                 localStorage.setItem('user_name', username);
             }
+
             return response;
         } catch (err) {
             const userRole = role || 'paciente';
@@ -88,12 +87,12 @@ export const AuthProvider = ({ children }) => {
         try {
             setLoading(true);
             await AuthService.logout();
+        } catch (err) {
+            console.error('Error al cerrar sesion:', err);
+        } finally {
             setAuthToken(null);
             setUser(null);
             setError(null);
-        } catch (err) {
-            console.error('Error al cerrar sesión:', err);
-        } finally {
             setLoading(false);
         }
     }, [setAuthToken]);
@@ -111,9 +110,6 @@ export const AuthProvider = ({ children }) => {
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-/**
- * Hook para usar el contexto de autenticación
- */
 export const useAuth = () => {
     const context = React.useContext(AuthContext);
     if (!context) {
