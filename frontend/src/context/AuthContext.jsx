@@ -18,6 +18,28 @@ export const AuthProvider = ({ children }) => {
     const [error, setError] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+    const setAuthToken = useCallback((token) => {
+        if (token) {
+            localStorage.setItem('auth_token', token);
+            AgendamientoService.setAuthToken(token);
+            UsuarioService.setAuthToken(token);
+            PacienteService.setAuthToken(token);
+            MedicoService.setAuthToken(token);
+            EspecialidadService.setAuthToken(token);
+            DisponibilidadService.setAuthToken(token);
+            setIsAuthenticated(true);
+        } else {
+            localStorage.removeItem('auth_token');
+            AgendamientoService.setAuthToken(null);
+            UsuarioService.setAuthToken(null);
+            PacienteService.setAuthToken(null);
+            MedicoService.setAuthToken(null);
+            EspecialidadService.setAuthToken(null);
+            DisponibilidadService.setAuthToken(null);
+            setIsAuthenticated(false);
+        }
+    }, []);
+
     // Verificar autenticación al montar
     useEffect(() => {
         const token = localStorage.getItem('auth_token');
@@ -29,7 +51,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, [setAuthToken]);
 
-    const setAuthToken = useCallback((token) => {
+
         if (token) {
             localStorage.setItem('auth_token', token);
             AgendamientoService.setAuthToken(token);
