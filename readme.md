@@ -1,6 +1,6 @@
 # Telemedicina y Triaje — Microservicios
 
-Este repositorio está organizado como proyecto de microservicios con tres servicios independientes y una capa de frontend.
+Este repositorio está organizado como proyecto de microservicios con una capa de frontend y varios servicios independientes, incluyendo el servicio de historial médico.
 
 ## Estructura propuesta
 
@@ -20,6 +20,10 @@ TELEMEDICINA_Y_TRIAJE/
     │   ├── config/
     │   ├── migrations/
     │   └── tests/
+    ├── historial_medico/
+    │   ├── app/
+    │   ├── config/
+    │   └── tests/
     ├── triage/
     │   ├── app.py
     │   └── triage/
@@ -38,6 +42,7 @@ TELEMEDICINA_Y_TRIAJE/
   - `src/services/` — clientes HTTP para cada microservicio.
   - `src/styles/` — estilos globales.
 - `microservices/agendamiento/` — lógica para citas y disponibilidad.
+- `microservices/historial_medico/` — gestión del historial clínico y consultas médicas.
 - `microservices/triage/` — lógica de evaluación y clasificación de riesgo.
 - `microservices/usuarios/` — autenticación y gestión de usuarios.
 
