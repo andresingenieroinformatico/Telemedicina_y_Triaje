@@ -51,28 +51,6 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, [setAuthToken]);
 
-
-        if (token) {
-            localStorage.setItem('auth_token', token);
-            AgendamientoService.setAuthToken(token);
-            UsuarioService.setAuthToken(token);
-            PacienteService.setAuthToken(token);
-            MedicoService.setAuthToken(token);
-            EspecialidadService.setAuthToken(token);
-            DisponibilidadService.setAuthToken(token);
-            setIsAuthenticated(true);
-        } else {
-            localStorage.removeItem('auth_token');
-            AgendamientoService.setAuthToken(null);
-            UsuarioService.setAuthToken(null);
-            PacienteService.setAuthToken(null);
-            MedicoService.setAuthToken(null);
-            EspecialidadService.setAuthToken(null);
-            DisponibilidadService.setAuthToken(null);
-            setIsAuthenticated(false);
-        }
-    }, []);
-
     const login = useCallback(async (username, password) => {
         try {
             setLoading(true);
