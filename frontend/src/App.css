@@ -26,6 +26,22 @@ code {
     flex-direction: column;
 }
 
+.app-nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.nav-brand:hover,
+.nav-link:hover {
+    opacity: 0.9;
+}
+
+.hero-card,
+.feature-card {
+    animation: fadeIn 0.35s ease;
+}
+
 /* Contenedor principal */
 .App > :not(nav) {
     flex: 1;
