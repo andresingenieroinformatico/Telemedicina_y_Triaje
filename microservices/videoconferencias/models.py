@@ -1,4 +1,4 @@
-from config import db
+from microservices.videoconferencias.config import db
 from datetime import datetime
 
 class Sala(db.Model):

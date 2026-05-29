@@ -4,7 +4,7 @@ Tests básicos de la API (requiere DB de testing configurada).
 Uso: pytest tests/
 """
 import pytest
-from app import create_app, db as _db
+from microservices.videoconferencias.app import create_app, db as _db
 
 
 @pytest.fixture(scope="session")

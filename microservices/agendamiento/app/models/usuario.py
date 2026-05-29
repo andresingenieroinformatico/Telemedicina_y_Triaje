@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import db
+from microservices.videoconferencias.app import db
 from .base import TimestampMixin
 
 

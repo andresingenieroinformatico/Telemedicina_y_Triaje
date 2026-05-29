@@ -1,5 +1,5 @@
 from flask import Flask
-from config import Config, db
+from microservices.videoconferencias.config import Config, db
 
 def create_app():
     app = Flask(__name__)
@@ -7,7 +7,7 @@ def create_app():
 
     db.init_app(app)
 
-    from routes import video_bp
+    from microservices.videoconferencias.routes import video_bp
     app.register_blueprint(video_bp)
 
     with app.app_context():

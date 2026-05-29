@@ -1,4 +1,4 @@
-from app import ma
+from microservices.videoconferencias.app import ma
 from app.models import (
     Paciente, Medico, Especialidad,
     DisponibilidadMedico, Agendamiento, HistorialAgendamiento

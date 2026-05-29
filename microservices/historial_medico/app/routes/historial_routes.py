@@ -6,7 +6,7 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
-from app import db
+from microservices.videoconferencias.app import db
 from app.models  import HistorialMedico, Paciente
 from app.schemas import HistorialSchema, HistorialUpdateSchema
 

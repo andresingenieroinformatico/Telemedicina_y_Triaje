@@ -3,7 +3,7 @@ app/models/paciente.py
 Modelo de Paciente – datos demográficos y de contacto.
 """
 from datetime import datetime, date
-from app import db
+from microservices.videoconferencias.app import db
 
 
 class Paciente(db.Model):

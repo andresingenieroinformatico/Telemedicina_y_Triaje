@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from app import db
+from microservices.videoconferencias.app import db
 
 
 class HistorialAgendamiento(db.Model):

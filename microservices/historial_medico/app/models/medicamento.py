@@ -3,7 +3,7 @@ app/models/medicamento.py
 Catálogo de medicamentos y tabla de prescripciones por consulta.
 """
 from datetime import datetime
-from app import db
+from microservices.videoconferencias.app import db
 
 
 class Medicamento(db.Model):

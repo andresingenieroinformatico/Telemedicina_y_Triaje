@@ -1,5 +1,5 @@
 """Script pequeño para eliminar el usuario de prueba 'inttest_auto'."""
-from app import create_app, db
+from microservices.videoconferencias.app import create_app, db
 from app.models import Usuario
 import os
 

@@ -6,7 +6,7 @@ Uso:
     python run.py      (directo)
 """
 import os
-from app import create_app
+from microservices.videoconferencias.app import create_app
 
 app = create_app(os.getenv("FLASK_ENV", "development"))
 

@@ -9,7 +9,7 @@ from typing import Optional
 
 from sqlalchemy import and_, or_
 
-from app import db
+from microservices.videoconferencias.app import db
 from app.models import (
     Agendamiento, HistorialAgendamiento,
     Medico, Paciente, DisponibilidadMedico

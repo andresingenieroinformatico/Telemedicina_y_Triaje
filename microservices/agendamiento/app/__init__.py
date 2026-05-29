@@ -5,7 +5,7 @@ from flask_marshmallow import Marshmallow
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 
-from config import config
+from microservices.videoconferencias.config import config
 
 db = SQLAlchemy()
 migrate = Migrate()

@@ -3,7 +3,7 @@ app/models/historial.py
 Modelo de Historial Médico – ficha clínica principal del paciente.
 """
 from datetime import datetime
-from app import db
+from microservices.videoconferencias.app import db
 
 
 class HistorialMedico(db.Model):

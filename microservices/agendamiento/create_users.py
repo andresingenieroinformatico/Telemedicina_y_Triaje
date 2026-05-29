@@ -7,7 +7,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 
-from app import create_app, db
+from microservices.videoconferencias.app import create_app, db
 from app.models import Usuario, Medico, Paciente
 
 app = create_app("development")

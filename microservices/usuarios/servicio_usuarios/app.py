@@ -1,7 +1,7 @@
 from flask import Flask
-from config import Config
-from models import db
-from routes import pacientes_bp
+from microservices.videoconferencias.config import Config
+from microservices.videoconferencias.models import db
+from microservices.videoconferencias.routes import pacientes_bp
 from flask_migrate import Migrate
 
 app = Flask(__name__)

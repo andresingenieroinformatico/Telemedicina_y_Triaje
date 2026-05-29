@@ -4,7 +4,7 @@ Poblar la base de datos con datos de prueba.
 Uso: python seed.py
 """
 from datetime import date
-from app import create_app, db
+from microservices.videoconferencias.app import create_app, db
 from app.models import Paciente, HistorialMedico, Consulta, Medicamento, SignosVitales
 
 

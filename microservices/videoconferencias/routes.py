@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from config import db
-from models import Sala, Sesion, Participante
+from microservices.videoconferencias.config import db
+from microservices.videoconferencias.models import Sala, Sesion, Participante
 from datetime import datetime
 
 video_bp = Blueprint("video", __name__)

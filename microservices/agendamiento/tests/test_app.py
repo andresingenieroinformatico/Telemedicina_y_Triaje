@@ -1,6 +1,6 @@
 import unittest
 
-from app import create_app, db
+from microservices.videoconferencias.app import create_app, db
 
 
 class AppSmokeTest(unittest.TestCase):

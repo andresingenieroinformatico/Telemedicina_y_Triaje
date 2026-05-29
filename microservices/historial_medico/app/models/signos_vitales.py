@@ -3,7 +3,7 @@ app/models/signos_vitales.py
 Registro de signos vitales del paciente (enviados por el traje automatizado).
 """
 from datetime import datetime
-from app import db
+from microservices.videoconferencias.app import db
 
 
 class SignosVitales(db.Model):
