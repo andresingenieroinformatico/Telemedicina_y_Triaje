@@ -5,6 +5,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import TriagePage from './pages/TriagePage';
 import AgendamientoPage from './pages/AgendamientoPage';
+import UsuariosPage from './pages/UsuariosPage';
+import HistorialMedicoPage from './pages/HistorialMedicoPage';
 import { setupAxiosInterceptors } from './services/axios.interceptors';
 import './App.css';
 
@@ -34,8 +36,14 @@ const Navigation = () => {
                         <Link to="/triage" style={{ color: 'white', marginRight: '20px', textDecoration: 'none' }}>
                             Triaje
                         </Link>
-                        <Link to="/agendamientos" style={{ color: 'white', textDecoration: 'none' }}>
+                        <Link to="/agendamientos" style={{ color: 'white', marginRight: '20px', textDecoration: 'none' }}>
                             Agendamientos
+                        </Link>
+                        <Link to="/usuarios" style={{ color: 'white', marginRight: '20px', textDecoration: 'none' }}>
+                            Usuarios
+                        </Link>
+                        <Link to="/historial-medico" style={{ color: 'white', textDecoration: 'none' }}>
+                            Historial Médico
                         </Link>
                     </>
                 )}
@@ -96,6 +104,22 @@ const MainApp = () => {
                             </ProtectedRoute>
                         }
                     />
+                    <Route
+                        path="/usuarios"
+                        element={
+                            <ProtectedRoute>
+                                <UsuariosPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/historial-medico"
+                        element={
+                            <ProtectedRoute>
+                                <HistorialMedicoPage />
+                            </ProtectedRoute>
+                        }
+                    />
                 </Routes>
             </div>
         </Router>
@@ -131,6 +155,12 @@ const HomePage = () => (
                 </li>
                 <li>
                     <strong>Autenticación:</strong> Control de acceso por usuario y rol
+                </li>
+                <li>
+                    <strong>Usuarios:</strong> Plantilla base para gestión de cuentas y permisos
+                </li>
+                <li>
+                    <strong>Historial Médico:</strong> Plantilla base para pacientes, consultas y signos vitales
                 </li>
             </ul>
         </div>

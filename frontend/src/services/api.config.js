@@ -5,6 +5,7 @@ export const API_BASE_URLS = {
     AGENDAMIENTO: process.env.REACT_APP_AGENDAMIENTO_URL || 'http://localhost:5000',
     TRIAGE: process.env.REACT_APP_TRIAGE_URL || 'http://localhost:5001',
     USUARIOS: process.env.REACT_APP_USUARIOS_URL || 'http://localhost:5002',
+    HISTORIAL_MEDICO: process.env.REACT_APP_HISTORIAL_MEDICO_URL || 'http://localhost:5003',
 };
 
 export const API_ENDPOINTS = {
@@ -61,5 +62,14 @@ export const API_ENDPOINTS = {
         CREAR: '/usuarios',
         OBTENER: (id) => `/usuarios/${id}`,
         LISTAR: '/usuarios',
+    },
+
+    // Historial Médico Service
+    HISTORIAL_MEDICO: {
+        PACIENTES: '/api/pacientes/',
+        PACIENTE: (id) => `/api/pacientes/${id}`,
+        RESUMEN: (id) => `/api/historiales/paciente/${id}`,
+        CONSULTAS: (historialId) => `/api/consultas/historial/${historialId}`,
+        MEDICAMENTOS: '/api/medicamentos/',
     },
 };
