@@ -7,6 +7,7 @@ import TriagePage from './pages/TriagePage';
 import AgendamientoPage from './pages/AgendamientoPage';
 import UsuariosPage from './pages/UsuariosPage';
 import HistorialMedicoPage from './pages/HistorialMedicoPage';
+import PacientesPage from './pages/PacientesPage';
 import { setupAxiosInterceptors } from './services/axios.interceptors';
 import './App.css';
 
@@ -21,6 +22,8 @@ const patientModules = [
 const doctorModules = [
     { title: 'Pacientes en triage', description: 'Revisa casos, riesgo y prioridad de atencion.', path: '/triage' },
     { title: 'Agenda', description: 'Gestiona reservas y disponibilidad medica.', path: '/agendamientos' },
+    { title: 'Pacientes', description: 'Consulta el directorio clinico y datos de contacto.', path: '/pacientes' },
+    { title: 'Historial medico', description: 'Accede a antecedentes y seguimiento clinico.', path: '/historial-medico' },
     { title: 'Usuarios', description: 'Administra cuentas, roles y acceso del equipo.', path: '/usuarios' },
 ];
 
@@ -113,6 +116,14 @@ const MainApp = () => {
                         element={
                             <ProtectedRoute allowedRoles={['paciente', 'medico']}>
                                 <AgendamientoPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/pacientes"
+                        element={
+                            <ProtectedRoute allowedRoles={['medico']}>
+                                <PacientesPage />
                             </ProtectedRoute>
                         }
                     />
@@ -225,6 +236,10 @@ const PublicLanding = () => {
                                 <span>{label}</span>
                             </div>
                         ))}
+                    </div>
+                    <div className="clinical-proof">
+                        <strong>Experiencia preparada para usuarios frios</strong>
+                        <span>Jerarquia clara, CTA visible y mensajes de confianza para reducir rebote desde campanas pagas.</span>
                     </div>
                 </aside>
             </section>

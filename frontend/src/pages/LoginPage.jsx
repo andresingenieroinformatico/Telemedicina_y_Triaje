@@ -11,7 +11,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [name, setName] = useState('');
-    const role = 'paciente';
+    const [role, setRole] = useState('paciente');
     const [errors, setErrors] = useState({});
     const { login, loading, error: authError, isAuthenticated } = useAuth();
     const navigate = useNavigate();
@@ -65,10 +65,11 @@ const LoginPage = () => {
                     </div>
 
                     <div style={{ display: 'grid', gap: '12px' }}>
-                        {[
+                        {[ 
                             ['Agenda rapida', 'Reserva y gestiona consultas medicas con pocos pasos.'],
                             ['Triage guiado', 'Registra sintomas y signos vitales con estructura clara.'],
                             ['Historial clinico', 'Centraliza antecedentes y seguimiento del paciente.'],
+                            ['Acceso por rol', 'Ingresa como paciente o medico segun tu flujo de trabajo.'],
                         ].map(([title, text]) => (
                             <div key={title} className="section-panel">
                                 <strong>{title}</strong>
@@ -103,6 +104,24 @@ const LoginPage = () => {
                         {authError && <Alert type="error" message={authError} />}
 
                         <form onSubmit={handleSubmit}>
+                            <div className="role-selector" aria-label="Seleccionar tipo de acceso">
+                                {[
+                                    ['paciente', 'Paciente', 'Agenda, triage e historial personal.'],
+                                    ['medico', 'Medico', 'Pacientes, agenda y gestion clinica.'],
+                                ].map(([value, label, description]) => (
+                                    <button
+                                        key={value}
+                                        type="button"
+                                        className={`role-card ${role === value ? 'role-card--active' : ''}`}
+                                        onClick={() => setRole(value)}
+                                        aria-pressed={role === value}
+                                    >
+                                        <strong>{label}</strong>
+                                        <span>{description}</span>
+                                    </button>
+                                ))}
+                            </div>
+
                             {mode === 'register' && (
                                 <Input
                                     label="Nombre completo"
@@ -126,7 +145,7 @@ const LoginPage = () => {
                             />
 
                             {mode === 'register' && (
-                                <Alert type="info" message="Todos los registros creados desde aqui se asignan como pacientes." />
+                                <Alert type="info" message={`La cuenta se creara con perfil de ${role === 'medico' ? 'medico' : 'paciente'}.`} />
                             )}
 
                             <Input
