@@ -5,11 +5,8 @@ import PacienteService from '../services/paciente.service';
 import EspecialidadService from '../services/especialidad.service';
 import { Alert, Button, Input, Select, FormGroup, Spinner, Table } from '../components/UIComponents';
 
-/**
- * Página de Agendamiento - Gestión de citas
- */
 const AgendamientoPage = () => {
-    const [tab, setTab] = useState('listar'); // 'listar', 'crear'
+    const [tab, setTab] = useState('listar');
     const [agendamientos, setAgendamientos] = useState([]);
     const [medicos, setMedicos] = useState([]);
     const [pacientes, setPacientes] = useState([]);
@@ -17,15 +14,7 @@ const AgendamientoPage = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [errors, setErrors] = useState({});
-
-    // Filtros
-    const [filtros, setFiltros] = useState({
-        paciente_id: '',
-        medico_id: '',
-        estado: '',
-    });
-
-    // Formulario de crear agendamiento
+    const [filtros, setFiltros] = useState({ paciente_id: '', medico_id: '', estado: '' });
     const [formAgendamiento, setFormAgendamiento] = useState({
         paciente_id: '',
         medico_id: '',
@@ -35,7 +24,6 @@ const AgendamientoPage = () => {
         motivo: '',
     });
 
-    // Cargar datos iniciales
     useEffect(() => {
         cargarEspecialidades();
         cargarMedicos();
@@ -67,7 +55,7 @@ const AgendamientoPage = () => {
             const data = await MedicoService.listar();
             setMedicos(Array.isArray(data) ? data : []);
         } catch (err) {
-            console.error('Error al cargar médicos:', err);
+            console.error('Error al cargar medicos:', err);
         }
     };
 
@@ -89,28 +77,17 @@ const AgendamientoPage = () => {
         }
     };
 
-    // Cargar agendamientos cuando cambia la tab
     useEffect(() => {
-        if (tab === 'listar') {
-            cargarAgendamientos();
-        }
+        if (tab === 'listar') cargarAgendamientos();
     }, [tab, cargarAgendamientos]);
 
     const validateForm = () => {
         const newErrors = {};
 
-        if (!formAgendamiento.paciente_id) {
-            newErrors.paciente_id = 'El paciente es requerido';
-        }
-        if (!formAgendamiento.medico_id) {
-            newErrors.medico_id = 'El médico es requerido';
-        }
-        if (!formAgendamiento.fecha_cita) {
-            newErrors.fecha_cita = 'La fecha es requerida';
-        }
-        if (!formAgendamiento.hora_cita) {
-            newErrors.hora_cita = 'La hora es requerida';
-        }
+        if (!formAgendamiento.paciente_id) newErrors.paciente_id = 'El paciente es requerido';
+        if (!formAgendamiento.medico_id) newErrors.medico_id = 'El medico es requerido';
+        if (!formAgendamiento.fecha_cita) newErrors.fecha_cita = 'La fecha es requerida';
+        if (!formAgendamiento.hora_cita) newErrors.hora_cita = 'La hora es requerida';
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -121,9 +98,7 @@ const AgendamientoPage = () => {
         setError('');
         setErrors({});
 
-        if (!validateForm()) {
-            return;
-        }
+        if (!validateForm()) return;
 
         setLoading(true);
 
@@ -133,12 +108,10 @@ const AgendamientoPage = () => {
                 medico_id: parseInt(formAgendamiento.medico_id),
                 fecha_cita: formAgendamiento.fecha_cita,
                 hora_cita: formAgendamiento.hora_cita,
-                motivo: formAgendamiento.motivo || 'Consulta médica',
+                motivo: formAgendamiento.motivo || 'Consulta medica',
             };
 
             await AgendamientoService.crear(payload);
-
-            // Limpiar formulario
             setFormAgendamiento({
                 paciente_id: '',
                 medico_id: '',
@@ -147,7 +120,6 @@ const AgendamientoPage = () => {
                 hora_cita: '',
                 motivo: '',
             });
-
             setTab('listar');
             await cargarAgendamientos();
         } catch (err) {
@@ -159,9 +131,7 @@ const AgendamientoPage = () => {
     };
 
     const handleCancelarAgendamiento = async (id) => {
-        if (!window.confirm('¿Está seguro de que desea cancelar este agendamiento?')) {
-            return;
-        }
+        if (!window.confirm('Esta seguro de que desea cancelar este agendamiento?')) return;
 
         setLoading(true);
         setError('');
@@ -181,7 +151,7 @@ const AgendamientoPage = () => {
         { label: 'Todos', value: '' },
         { label: 'Pendiente', value: 'PENDIENTE' },
         { label: 'Confirmada', value: 'CONFIRMADA' },
-        { label: 'En Curso', value: 'EN_CURSO' },
+        { label: 'En curso', value: 'EN_CURSO' },
         { label: 'Completada', value: 'COMPLETADA' },
         { label: 'Cancelada', value: 'CANCELADA' },
     ];
@@ -202,61 +172,42 @@ const AgendamientoPage = () => {
     }));
 
     return (
-        <div style={{ maxWidth: '1000px', margin: '20px auto', padding: '20px' }}>
-            <h1>📅 Gestión de Agendamientos</h1>
+        <main className="page-shell">
+            <p className="eyebrow" style={{ color: '#155eef' }}>Agenda medica</p>
+            <h1>Gestion de agendamientos</h1>
+            <p className="muted" style={{ marginBottom: '22px' }}>
+                Coordina citas, filtra disponibilidad y crea nuevos agendamientos con un flujo rapido y ordenado.
+            </p>
 
             {error && <Alert type="error" message={error} onClose={() => setError('')} />}
 
-            <FormGroup style={{ marginBottom: '20px' }}>
-                <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-                    <button
-                        onClick={() => setTab('listar')}
-                        style={{
-                            padding: '8px 15px',
-                            backgroundColor: tab === 'listar' ? '#007bff' : '#e9ecef',
-                            color: tab === 'listar' ? 'white' : '#333',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        📋 Listar Agendamientos
-                    </button>
-                    <button
-                        onClick={() => setTab('crear')}
-                        style={{
-                            padding: '8px 15px',
-                            backgroundColor: tab === 'crear' ? '#007bff' : '#e9ecef',
-                            color: tab === 'crear' ? 'white' : '#333',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        ➕ Crear Agendamiento
-                    </button>
+            <FormGroup>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <Button type="button" onClick={() => setTab('listar')} variant={tab === 'listar' ? 'primary' : 'secondary'}>
+                        Listar agendamientos
+                    </Button>
+                    <Button type="button" onClick={() => setTab('crear')} variant={tab === 'crear' ? 'primary' : 'secondary'}>
+                        Crear agendamiento
+                    </Button>
                 </div>
             </FormGroup>
 
             {tab === 'listar' && (
                 <FormGroup>
                     <h2>Filtros</h2>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px', marginBottom: '20px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' }}>
                         <Select
                             label="Paciente"
                             options={[{ label: 'Todos', value: '' }, ...pacienteOptions]}
                             value={filtros.paciente_id}
                             onChange={(e) => setFiltros({ ...filtros, paciente_id: e.target.value })}
                         />
-
                         <Select
-                            label="Médico"
+                            label="Medico"
                             options={[{ label: 'Todos', value: '' }, ...medicoOptions]}
                             value={filtros.medico_id}
                             onChange={(e) => setFiltros({ ...filtros, medico_id: e.target.value })}
                         />
-
                         <Select
                             label="Estado"
                             options={estadoOptions}
@@ -270,13 +221,13 @@ const AgendamientoPage = () => {
                     </Button>
 
                     {loading ? (
-                        <Spinner />
+                        <Spinner label="Cargando agenda..." />
                     ) : (
                         <Table
                             columns={[
                                 { key: 'id', label: 'ID' },
                                 { key: 'paciente_nombre', label: 'Paciente' },
-                                { key: 'medico_nombre', label: 'Médico' },
+                                { key: 'medico_nombre', label: 'Medico' },
                                 { key: 'fecha_cita', label: 'Fecha' },
                                 { key: 'hora_cita', label: 'Hora' },
                                 { key: 'estado', label: 'Estado' },
@@ -289,7 +240,7 @@ const AgendamientoPage = () => {
                                                 <Button
                                                     variant="danger"
                                                     onClick={() => handleCancelarAgendamiento(row.id)}
-                                                    style={{ padding: '5px 10px', fontSize: '12px' }}
+                                                    style={{ minHeight: '34px', padding: '7px 10px', fontSize: '0.82rem' }}
                                                 >
                                                     Cancelar
                                                 </Button>
@@ -306,103 +257,65 @@ const AgendamientoPage = () => {
 
             {tab === 'crear' && (
                 <FormGroup>
-                    <h2>Crear Nuevo Agendamiento</h2>
-
+                    <h2>Crear nuevo agendamiento</h2>
                     <form onSubmit={handleCrearAgendamiento}>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '15px' }}>
                             <Select
                                 label="Paciente"
                                 options={pacienteOptions}
                                 value={formAgendamiento.paciente_id}
-                                onChange={(e) =>
-                                    setFormAgendamiento({
-                                        ...formAgendamiento,
-                                        paciente_id: e.target.value,
-                                    })
-                                }
+                                onChange={(e) => setFormAgendamiento({ ...formAgendamiento, paciente_id: e.target.value })}
                                 error={errors.paciente_id}
                                 required
                             />
-
                             <Select
                                 label="Especialidad"
                                 options={especialidadOptions}
                                 value={formAgendamiento.especialidad_id}
-                                onChange={(e) =>
-                                    setFormAgendamiento({
-                                        ...formAgendamiento,
-                                        especialidad_id: e.target.value,
-                                    })
-                                }
+                                onChange={(e) => setFormAgendamiento({ ...formAgendamiento, especialidad_id: e.target.value })}
                             />
-
                             <Select
-                                label="Médico"
+                                label="Medico"
                                 options={medicoOptions}
                                 value={formAgendamiento.medico_id}
-                                onChange={(e) =>
-                                    setFormAgendamiento({
-                                        ...formAgendamiento,
-                                        medico_id: e.target.value,
-                                    })
-                                }
+                                onChange={(e) => setFormAgendamiento({ ...formAgendamiento, medico_id: e.target.value })}
                                 error={errors.medico_id}
                                 required
                             />
-
                             <Input
                                 label="Fecha"
                                 type="date"
                                 value={formAgendamiento.fecha_cita}
-                                onChange={(e) =>
-                                    setFormAgendamiento({
-                                        ...formAgendamiento,
-                                        fecha_cita: e.target.value,
-                                    })
-                                }
+                                onChange={(e) => setFormAgendamiento({ ...formAgendamiento, fecha_cita: e.target.value })}
                                 error={errors.fecha_cita}
                                 required
                             />
-
                             <Input
                                 label="Hora"
                                 type="time"
                                 value={formAgendamiento.hora_cita}
-                                onChange={(e) =>
-                                    setFormAgendamiento({
-                                        ...formAgendamiento,
-                                        hora_cita: e.target.value,
-                                    })
-                                }
+                                onChange={(e) => setFormAgendamiento({ ...formAgendamiento, hora_cita: e.target.value })}
                                 error={errors.hora_cita}
                                 required
                             />
-
                             <Input
                                 label="Motivo"
                                 type="text"
                                 value={formAgendamiento.motivo}
-                                onChange={(e) =>
-                                    setFormAgendamiento({
-                                        ...formAgendamiento,
-                                        motivo: e.target.value,
-                                    })
-                                }
+                                onChange={(e) => setFormAgendamiento({ ...formAgendamiento, motivo: e.target.value })}
                                 placeholder="Motivo de la consulta"
                             />
                         </div>
 
-                        <div style={{ marginTop: '20px' }}>
-                            <Button type="submit" disabled={loading} variant="primary">
-                                {loading ? 'Creando...' : 'Crear Agendamiento'}
-                            </Button>
-                        </div>
+                        <Button type="submit" disabled={loading} variant="primary">
+                            {loading ? 'Creando...' : 'Crear agendamiento'}
+                        </Button>
 
                         {loading && <Spinner />}
                     </form>
                 </FormGroup>
             )}
-        </div>
+        </main>
     );
 };
 

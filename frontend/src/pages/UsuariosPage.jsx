@@ -2,9 +2,6 @@ import React, { useEffect, useState } from 'react';
 import UsuarioService from '../services/usuario.service';
 import { Alert, FormGroup, Spinner, Table } from '../components/UIComponents';
 
-/**
- * Plantilla visual para el microservicio de Usuarios
- */
 const UsuariosPage = () => {
     const [usuarios, setUsuarios] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -28,36 +25,38 @@ const UsuariosPage = () => {
     };
 
     return (
-        <div style={{ maxWidth: '1200px', margin: '30px auto', padding: '0 20px 40px' }}>
-            <h1>👤 Usuarios y Seguridad</h1>
-            <p style={{ color: '#555', marginBottom: '20px' }}>
-                Plantilla base para administrar usuarios, autenticación y control de acceso del microservicio de usuarios.
+        <main className="page-shell">
+            <p className="eyebrow" style={{ color: '#155eef' }}>Administracion</p>
+            <h1>Usuarios y seguridad</h1>
+            <p className="muted" style={{ marginBottom: '22px' }}>
+                Supervisa usuarios, roles y acceso del equipo clinico desde una vista limpia y escaneable.
             </p>
 
             {error && <Alert type="error" message={error} />}
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+            <section className="feature-grid" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
                 <FormGroup>
+                    <span className="feature-icon" aria-hidden="true">01</span>
                     <strong>Usuarios activos</strong>
-                    <div style={{ fontSize: '28px', marginTop: '8px' }}>{usuarios.length}</div>
+                    <div style={{ fontSize: '2rem', marginTop: '8px', fontWeight: 900 }}>{usuarios.length}</div>
                 </FormGroup>
                 <FormGroup>
-                    <strong>Autenticación</strong>
-                    <div style={{ fontSize: '14px', marginTop: '8px', color: '#555' }}>Login, sesiones y control de acceso.</div>
+                    <span className="feature-icon" aria-hidden="true">02</span>
+                    <strong>Autenticacion</strong>
+                    <p className="muted" style={{ margin: '8px 0 0' }}>Login, sesiones y control de acceso.</p>
                 </FormGroup>
                 <FormGroup>
+                    <span className="feature-icon" aria-hidden="true">03</span>
                     <strong>Roles sugeridos</strong>
-                    <ul style={{ margin: '8px 0 0 18px', color: '#555' }}>
-                        <li>Administrador</li>
-                        <li>Médico</li>
-                        <li>Paciente</li>
-                    </ul>
+                    <p className="muted" style={{ margin: '8px 0 0' }}>Administrador, medico y paciente.</p>
                 </FormGroup>
-            </div>
+            </section>
 
-            {loading ? <Spinner /> : (
-                <>
-                    <h2>Vista de usuarios</h2>
+            <FormGroup>
+                <h2>Vista de usuarios</h2>
+                {loading ? (
+                    <Spinner />
+                ) : (
                     <Table
                         columns={[
                             { key: 'id', label: 'ID' },
@@ -67,9 +66,9 @@ const UsuariosPage = () => {
                         ]}
                         data={usuarios}
                     />
-                </>
-            )}
-        </div>
+                )}
+            </FormGroup>
+        </main>
     );
 };
 
