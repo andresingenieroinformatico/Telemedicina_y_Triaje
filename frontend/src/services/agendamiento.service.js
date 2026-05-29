@@ -121,4 +121,5 @@ class AgendamientoService {
     }
 }
 
-export default new AgendamientoService();
+const agendamientoService = new AgendamientoService();
+export default agendamientoService;

@@ -62,4 +62,5 @@ class MedicoService {
     }
 }
 
-export default new MedicoService();
+const medicoService = new MedicoService();
+export default medicoService;

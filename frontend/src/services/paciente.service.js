@@ -73,4 +73,5 @@ class PacienteService {
     }
 }
 
-export default new PacienteService();
+const pacienteService = new PacienteService();
+export default pacienteService;

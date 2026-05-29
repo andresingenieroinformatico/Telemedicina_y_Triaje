@@ -53,4 +53,5 @@ class DisponibilidadService {
     }
 }
 
-export default new DisponibilidadService();
+const disponibilidadService = new DisponibilidadService();
+export default disponibilidadService;

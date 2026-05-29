@@ -1,7 +1,6 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import AuthService from '../services/auth.service';
 import AgendamientoService from '../services/agendamiento.service';
-import TriageService from '../services/triage.service';
 import UsuarioService from '../services/usuario.service';
 import PacienteService from '../services/paciente.service';
 import MedicoService from '../services/medico.service';
@@ -28,7 +27,7 @@ export const AuthProvider = ({ children }) => {
             // Aquí podrías obtener los datos del usuario
         }
         setLoading(false);
-    }, []);
+    }, [setAuthToken]);
 
     const setAuthToken = useCallback((token) => {
         if (token) {

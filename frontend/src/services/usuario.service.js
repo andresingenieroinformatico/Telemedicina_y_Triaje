@@ -53,4 +53,5 @@ class UsuarioService {
     }
 }
 
-export default new UsuarioService();
+const usuarioService = new UsuarioService();
+export default usuarioService;

@@ -39,4 +39,5 @@ class TriageService {
     }
 }
 
-export default new TriageService();
+const triageService = new TriageService();
+export default triageService;

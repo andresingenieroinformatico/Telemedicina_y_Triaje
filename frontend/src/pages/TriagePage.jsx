@@ -100,7 +100,7 @@ const TriagePage = () => {
     };
 
     // Cargar historial
-    const handleCargarHistorial = async () => {
+    const handleCargarHistorial = React.useCallback(async () => {
         if (!pacienteId.trim()) {
             setError('Ingrese un ID de paciente');
             return;
@@ -118,13 +118,13 @@ const TriagePage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [pacienteId]);
 
     useEffect(() => {
         if (modo === 'historial') {
             handleCargarHistorial();
         }
-    }, [modo]);
+    }, [modo, handleCargarHistorial]);
 
     return (
         <div style={{ maxWidth: '900px', margin: '20px auto', padding: '20px' }}>

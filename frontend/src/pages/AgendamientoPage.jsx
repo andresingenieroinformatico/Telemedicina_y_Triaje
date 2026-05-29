@@ -47,9 +47,9 @@ const AgendamientoPage = () => {
         if (tab === 'listar') {
             cargarAgendamientos();
         }
-    }, [tab]);
+    }, [tab, cargarAgendamientos]);
 
-    const cargarAgendamientos = async () => {
+    const cargarAgendamientos = React.useCallback(async () => {
         setLoading(true);
         setError('');
 
@@ -67,7 +67,7 @@ const AgendamientoPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [filtros]);
 
     const cargarMedicos = async () => {
         try {

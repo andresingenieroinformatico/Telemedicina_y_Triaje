@@ -68,4 +68,5 @@ class EspecialidadService {
     }
 }
 
-export default new EspecialidadService();
+const especialidadService = new EspecialidadService();
+export default especialidadService;
