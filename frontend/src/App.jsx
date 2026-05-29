@@ -138,33 +138,67 @@ const App = () => {
 /**
  * Página de inicio
  */
-const HomePage = () => (
-    <div style={{ maxWidth: '1100px', margin: '32px auto', padding: '0 18px 40px' }}>
-        <section className="hero-card" style={{ background: 'linear-gradient(135deg, #eff6ff, #ffffff)', borderRadius: '18px', padding: '24px', boxShadow: '0 8px 24px rgba(15, 23, 42, 0.08)', marginBottom: '18px' }}>
-            <p style={{ textTransform: 'uppercase', letterSpacing: '0.18em', color: '#2563eb', fontWeight: 700, fontSize: '12px' }}>Frontend · rama de mejoras</p>
-            <h1 style={{ fontSize: '2rem', margin: '8px 0 10px' }}>Plataforma de Telemedicina y Triaje Automatizado</h1>
-            <p style={{ color: '#475569', maxWidth: '720px', lineHeight: 1.5 }}>
-                Esta vista central reúne los módulos principales del proyecto y ofrece una base más clara para continuar con el desarrollo del frontend.
-            </p>
-        </section>
+const HomePage = () => {
+    const { isAuthenticated, user } = useAuth();
 
-        <section className="feature-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
-            {[
-                ['Triaje Automatizado', 'Evaluación de riesgo, signos vitales y alertas clínicas.', '/triage'],
-                ['Agendamiento de Citas', 'Gestión de consultas, disponibilidad y seguimiento.', '/agendamientos'],
-                ['Usuarios', 'Módulo base para cuentas, roles y seguridad.', '/usuarios'],
-                ['Historial Médico', 'Pacientes, consultas, medicamentos y signos clínicos.', '/historial-medico'],
-            ].map(([title, description, path]) => (
-                <article key={title} className="feature-card" style={{ background: 'white', borderRadius: '16px', padding: '18px', boxShadow: '0 8px 20px rgba(15, 23, 42, 0.08)', border: '1px solid #e5e7eb' }}>
-                    <h2 style={{ fontSize: '1.05rem', marginBottom: '8px' }}>{title}</h2>
-                    <p style={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.4 }}>{description}</p>
-                    <Link to={path} style={{ display: 'inline-block', marginTop: '12px', color: '#2563eb', textDecoration: 'none', fontWeight: 700 }}>
-                        Abrir módulo →
-                    </Link>
-                </article>
-            ))}
-        </section>
-    </div>
-);
+    if (isAuthenticated) {
+        return (
+            <div style={{ maxWidth: '1100px', margin: '32px auto', padding: '0 18px 40px' }}>
+                <section className="hero-card" style={{ background: 'linear-gradient(135deg, #eff6ff, #ffffff)', borderRadius: '18px', padding: '24px', boxShadow: '0 8px 24px rgba(15, 23, 42, 0.08)', marginBottom: '18px' }}>
+                    <p style={{ textTransform: 'uppercase', letterSpacing: '0.18em', color: '#2563eb', fontWeight: 700, fontSize: '12px' }}>Bienvenido de nuevo</p>
+                    <h1 style={{ fontSize: '2rem', margin: '8px 0 10px' }}>Hola, {user?.username || 'usuario'} · {user?.role === 'medico' ? 'Panel médico' : 'Portal del paciente'}</h1>
+                    <p style={{ color: '#475569', maxWidth: '760px', lineHeight: 1.5 }}>
+                        Continúa con tus próximas citas, triage y seguimiento clínico desde aquí.
+                    </p>
+                </section>
+
+                <section className="feature-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+                    {[
+                        ['Triage', 'Revisa y prioriza el estado clínico del paciente.', '/triage'],
+                        ['Agendamientos', 'Gestiona reservas y agenda médica.', '/agendamientos'],
+                        ['Historial Médico', 'Consulta antecedentes y seguimiento clínico.', '/historial-medico'],
+                        ['Usuarios', 'Administra cuentas y roles del equipo.', '/usuarios'],
+                    ].map(([title, description, path]) => (
+                        <article key={title} className="feature-card" style={{ background: 'white', borderRadius: '16px', padding: '18px', boxShadow: '0 8px 20px rgba(15, 23, 42, 0.08)', border: '1px solid #e5e7eb' }}>
+                            <h2 style={{ fontSize: '1.05rem', marginBottom: '8px' }}>{title}</h2>
+                            <p style={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.4 }}>{description}</p>
+                            <Link to={path} style={{ display: 'inline-block', marginTop: '12px', color: '#2563eb', textDecoration: 'none', fontWeight: 700 }}>Abrir módulo →</Link>
+                        </article>
+                    ))}
+                </section>
+            </div>
+        );
+    }
+
+    return (
+        <div style={{ maxWidth: '1100px', margin: '32px auto', padding: '0 18px 40px' }}>
+            <section className="hero-card" style={{ background: 'linear-gradient(135deg, #eff6ff, #ffffff)', borderRadius: '18px', padding: '24px', boxShadow: '0 8px 24px rgba(15, 23, 42, 0.08)', marginBottom: '18px' }}>
+                <p style={{ textTransform: 'uppercase', letterSpacing: '0.18em', color: '#2563eb', fontWeight: 700, fontSize: '12px' }}>Telemedicina · Triaje · Atención integral</p>
+                <h1 style={{ fontSize: '2rem', margin: '8px 0 10px' }}>Una plataforma clara para agendar, evaluar y acompañar la atención médica.</h1>
+                <p style={{ color: '#475569', maxWidth: '760px', lineHeight: 1.5 }}>
+                    Conoce los servicios de la plataforma, explora cómo funciona la atención remota y accede con tu cuenta para continuar tu experiencia clínica.
+                </p>
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '14px' }}>
+                    <Link to="/login" style={{ background: '#2563eb', color: 'white', textDecoration: 'none', padding: '10px 16px', borderRadius: '8px', fontWeight: 700 }}>Iniciar sesión</Link>
+                    <Link to="/login" style={{ background: '#0f172a', color: 'white', textDecoration: 'none', padding: '10px 16px', borderRadius: '8px', fontWeight: 700 }}>Registrarse</Link>
+                </div>
+            </section>
+
+            <section className="feature-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+                {[
+                    ['Agendamiento de citas', 'Reserva consultas, revisa disponibilidad y administra tu agenda desde un solo lugar.', 'login'],
+                    ['Triage automatizado', 'Evalúa prioridad clínica, síntomas y alertas para acompañar mejor la atención.', 'login'],
+                    ['Historial médico', 'Mantén un seguimiento de antecedentes y evolución clínica.', 'login'],
+                    ['Soporte y seguridad', 'Accede con credenciales seguras y una experiencia pensada para pacientes y médicos.', 'login'],
+                ].map(([title, description]) => (
+                    <article key={title} className="feature-card" style={{ background: 'white', borderRadius: '16px', padding: '18px', boxShadow: '0 8px 20px rgba(15, 23, 42, 0.08)', border: '1px solid #e5e7eb' }}>
+                        <h2 style={{ fontSize: '1.05rem', marginBottom: '8px' }}>{title}</h2>
+                        <p style={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.4 }}>{description}</p>
+                    </article>
+                ))}
+            </section>
+        </div>
+    );
+};
 
 export default App;

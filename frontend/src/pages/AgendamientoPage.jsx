@@ -42,13 +42,6 @@ const AgendamientoPage = () => {
         cargarPacientes();
     }, []);
 
-    // Cargar agendamientos cuando cambia la tab
-    useEffect(() => {
-        if (tab === 'listar') {
-            cargarAgendamientos();
-        }
-    }, [tab, cargarAgendamientos]);
-
     const cargarAgendamientos = React.useCallback(async () => {
         setLoading(true);
         setError('');
@@ -95,6 +88,13 @@ const AgendamientoPage = () => {
             console.error('Error al cargar especialidades:', err);
         }
     };
+
+    // Cargar agendamientos cuando cambia la tab
+    useEffect(() => {
+        if (tab === 'listar') {
+            cargarAgendamientos();
+        }
+    }, [tab, cargarAgendamientos]);
 
     const validateForm = () => {
         const newErrors = {};
