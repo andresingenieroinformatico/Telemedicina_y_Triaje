@@ -8,9 +8,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: telemedicina_agendamiento
-      POSTGRES_USER: admin_telemedicina
-      POSTGRES_PASSWORD: password_seguro_123
+      POSTGRES_DB: ${POSTGRES_DB:-telemedicina_agendamiento}
+      POSTGRES_USER: ${POSTGRES_USER:-admin_telemedicina}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password_seguro_123}
     volumes:
       - datos_postgres:/var/lib/postgresql/data
     networks:
@@ -24,13 +24,11 @@ services:
       - db-postgres
     env_file:
       - .env
-    environment:
-      - DATABASE_URL=postgresql://admin_telemedicina:password_seguro_123@db-postgres:5432/telemedicina_agendamiento
     ports:
       - "5000:5000"
     volumes:
       - ./:/usr/src/app
-    command: sh -c "flask db upgrade && python run.py"
+    entrypoint: ["/bin/sh", "-c", "./scripts/start.sh"]
     networks:
       - red-telemedicina
 

@@ -59,6 +59,16 @@ cp .env.example .env
 
 Edita `.env` según tu entorno. Para PostgreSQL local con Docker, el valor por defecto ya funciona.
 
+### 2.1 Archivos de soporte
+
+- **`.env.example`**: plantilla con variables esperadas.
+- **`.dockerignore`**: evita incluir archivos locales en la imagen Docker.
+- **`scripts/setup_env.sh` / `scripts/setup_env.ps1`**: crean el entorno virtual e instalan dependencias.
+- **`scripts/start.sh`**: aplica migraciones y arranca la app (útil en contenedores).
+- **`Makefile`**: tareas comunes (`make install`, `make run`, `make docker`).
+
+Usa `scripts/setup_env.sh` (Linux/macOS) o `scripts/setup_env.ps1` (Windows PowerShell) para preparar el entorno rápidamente.
+
 ### 3. Configurar Flask
 
 Windows PowerShell:
@@ -101,6 +111,24 @@ Para detenerlo:
 
 ```bash
 docker compose down
+```
+
+### Quickstart (Unix)
+
+```bash
+cp .env.example .env
+./scripts/setup_env.sh
+source .venv/bin/activate
+./scripts/start.sh
+```
+
+### Quickstart (Windows PowerShell)
+
+```powershell
+Copy-Item .env.example .env
+.\scripts\setup_env.ps1
+.\.venv\Scripts\Activate.ps1
+python run.py
 ```
 
 ---
