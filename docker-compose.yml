@@ -28,7 +28,7 @@ services:
       - "5000:5000"
     volumes:
       - ./:/usr/src/app
-    entrypoint: ["/bin/sh", "-c", "./scripts/start.sh"]
+    entrypoint: ["/bin/sh", "-c", "/usr/src/app/scripts/start.sh"]
     networks:
       - red-telemedicina
 
