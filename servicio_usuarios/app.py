@@ -1,5 +1,5 @@
 from flask import Flask
-from config import Config
+from config import Config 
 from models import db
 from routes import pacientes_bp
 from flask_migrate import Migrate
@@ -15,4 +15,4 @@ migrate = Migrate(app, db)
 app.register_blueprint(pacientes_bp)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=False)
