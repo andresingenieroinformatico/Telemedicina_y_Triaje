@@ -9,7 +9,7 @@ from flask_jwt_extended import (
     jwt_required,
 )
 from flask_jwt_extended import set_access_cookies, unset_jwt_cookies
-from marshmallow import ValidationError
+from marshmallow import Schema, fields, ValidationError, validate
 
 from microservices.videoconferencias.app import db
 from app.models import Usuario, Paciente
@@ -18,17 +18,22 @@ from app.utils import success_response, error_response
 auth_bp = Blueprint("auth", __name__)
 
 
-class LoginSchema:
-    """Validación simple para login."""
-    def load(self, data):
-        username = data.get("username")
-        password = data.get("password")
-        if not username or not password:
-            raise ValidationError("username y password requeridos")
-        return {"username": username, "password": password}
+class LoginSchema(Schema):
+    """Esquema de validación para el inicio de sesión."""
+    username = fields.String(required=True, error_messages={"required": "username es requerido"})
+    password = fields.String(required=True, error_messages={"required": "password es requerido"})
+
+
+class RegisterSchema(Schema):
+    """Esquema de validación para el registro de pacientes."""
+    username = fields.String(required=True, validate=validate.Length(min=3))
+    email = fields.Email(required=True)
+    password = fields.String(required=True, validate=validate.Length(min=8))
+    paciente_id = fields.Integer(allow_none=True)
 
 
 _login_schema = LoginSchema()
+_register_schema = RegisterSchema()
 
 
 @auth_bp.route("/login", methods=["POST"])
@@ -136,35 +141,28 @@ def register():
     if not json_data:
         return error_response("Se requiere cuerpo JSON.")
 
-    username = json_data.get("username", "").strip()
-    email = json_data.get("email", "").strip()
-    password = json_data.get("password", "")
-    paciente_id = json_data.get("paciente_id")
+    try:
+        data = _register_schema.load(json_data)
+    except ValidationError as err:
+        return error_response("Datos inválidos.", errors=err.messages)
 
-    if not username or len(username) < 3:
-        return error_response("username debe tener al menos 3 caracteres.")
-    if not email or "@" not in email:
-        return error_response("email inválido.")
-    if not password or len(password) < 8:
-        return error_response("password debe tener al menos 8 caracteres.")
-
-    if Usuario.query.filter_by(username=username).first():
+    if Usuario.query.filter_by(username=data["username"]).first():
         return error_response("El username ya está en uso.", status_code=409)
-    if Usuario.query.filter_by(email=email).first():
+    if Usuario.query.filter_by(email=data["email"]).first():
         return error_response("El email ya está registrado.", status_code=409)
 
-    if paciente_id is not None:
-        paciente = Paciente.query.get(paciente_id)
+    if data.get("paciente_id") is not None:
+        paciente = Paciente.query.get(data["paciente_id"])
         if not paciente:
             return error_response("Paciente no encontrado para vincular el usuario.", status_code=404)
 
     usuario = Usuario(
-        username=username,
-        email=email,
+        username=data["username"],
+        email=data["email"],
         rol="PACIENTE",
-        paciente_id=paciente_id,
+        paciente_id=data.get("paciente_id"),
     )
-    usuario.set_password(password)
+    usuario.set_password(data["password"])
 
     db.session.add(usuario)
     db.session.commit()
