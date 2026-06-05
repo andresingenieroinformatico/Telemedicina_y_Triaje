@@ -11,6 +11,11 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password_seguro_123}
     volumes:
       - datos_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin_telemedicina -d telemedicina_agendamiento"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - red-telemedicina
 
@@ -19,14 +24,17 @@ services:
     container_name: api_telemedicina
     restart: unless-stopped
     depends_on:
-      - db-postgres
+      db-postgres:
+        condition: service_healthy
     env_file:
       - .env
+    environment:
+      - DATABASE_URL=postgresql://admin_telemedicina:password_seguro_123@db-postgres:5432/telemedicina_agendamiento
+      - FLASK_CONFIG=production
     ports:
       - "5000:5000"
     volumes:
       - ./:/usr/src/app
-    entrypoint: ["/bin/sh", "-c", "/usr/src/app/scripts/start.sh"]
     networks:
       - red-telemedicina
 

@@ -25,14 +25,13 @@ RUN pip install --no-cache-dir /wheels/* \
     && rm -rf /wheels
 
 COPY . .
-RUN chmod +x ./scripts/start.sh \
+RUN sed -i 's/\r$//' ./scripts/start.sh \
+    && chmod +x ./scripts/start.sh \
     && chown -R app:app /usr/src/app
 
 USER app
 
 ENV FLASK_APP=run.py
-ENV FLASK_ENV=production
 
 EXPOSE 5000
-
 ENTRYPOINT ["./scripts/start.sh"]
