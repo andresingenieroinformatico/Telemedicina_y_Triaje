@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db-postgres:
+    image: postgres:15-alpine
+    container_name: db_telemedicina_postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: telemedicina_agendamiento
+      POSTGRES_USER: admin_telemedicina
+      POSTGRES_PASSWORD: password_seguro_123
+    volumes:
+      - datos_postgres:/var/lib/postgresql/data
+    networks:
+      - red-telemedicina
+
+  api:
+    build: .
+    container_name: api_telemedicina
+    restart: unless-stopped
+    depends_on:
+      - db-postgres
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://admin_telemedicina:password_seguro_123@db-postgres:5432/telemedicina_agendamiento
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./:/usr/src/app
+    command: sh -c "flask db upgrade && python run.py"
+    networks:
+      - red-telemedicina
+
+networks:
+  red-telemedicina:
+    driver: bridge
+
+volumes:
+  datos_postgres:
+    driver: local

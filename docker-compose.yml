@@ -1,21 +1,27 @@
 services:
-  db-postgres:
-    image: postgres:15-alpine
-    container_name: db_telemedicina_postgres
-    restart: unless-stopped
+  db:
+    image: postgres:15
+    container_name: videoconferencias_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: videoconferencias
     ports:
       - "5432:5432"
+<<<<<<< HEAD
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-telemedicina_agendamiento}
       POSTGRES_USER: ${POSTGRES_USER:-admin_telemedicina}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password_seguro_123}
+=======
+>>>>>>> main
     volumes:
-      - datos_postgres:/var/lib/postgresql/data
-    networks:
-      - red-telemedicina
+      - postgres_data:/var/lib/postgresql/data
 
-  api:
+  app:
     build: .
+<<<<<<< HEAD
     container_name: api_telemedicina
     restart: unless-stopped
     depends_on:
@@ -33,7 +39,16 @@ services:
 networks:
   red-telemedicina:
     driver: bridge
+=======
+    container_name: videoconferencias_app
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgresql://admin:admin123@db:5432/videoconferencias
+    depends_on:
+      - db
+>>>>>>> main
 
 volumes:
-  datos_postgres:
-    driver: local
+  postgres_data:
