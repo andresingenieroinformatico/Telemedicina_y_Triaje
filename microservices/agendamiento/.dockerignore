@@ -1,0 +1,13 @@
+.venv
+venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite
+instance
+.mypy_cache
+.coverage
+.DS_Store
+.git
