@@ -42,8 +42,12 @@ const AgendamientoPage = () => {
             if (filtros.medico_id) params.medico_id = filtros.medico_id;
             if (filtros.estado) params.estado = filtros.estado;
 
-            const data = await AgendamientoService.listar(params);
-            setAgendamientos(Array.isArray(data) ? data : []);
+            const response = await AgendamientoService.listar(params);
+            // El microservicio de agendamiento devuelve { items: [], total: ... }
+            // o { success: true, data: { items: [] } } dependiendo de tu utils.py
+            const lista = response.items || response.data?.items || (Array.isArray(response) ? response : []);
+            setAgendamientos(lista);
+            
         } catch (err) {
             const errorMsg = typeof err === 'string' ? err : err.message || 'Error al cargar agendamientos';
             setError(errorMsg);
