@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_ENDPOINTS } from './api.config';
+import { API_BASE_URLS, API_ENDPOINTS } from './api.config';
 
 /**
  * Cliente HTTP para el servicio de Pacientes
@@ -7,8 +7,7 @@ import { API_ENDPOINTS } from './api.config';
 class PacienteService {
     constructor() {
         this.client = axios.create({
-            // Ahora apunta al Gateway en el sub-recurso de agendamiento
-            baseURL: `${process.env.REACT_APP_API_URL || 'http://localhost:8080/api'}/agendamiento`,
+            baseURL: API_BASE_URLS.USUARIOS,
             withCredentials: true,
             headers: {
                 'Content-Type': 'application/json',
