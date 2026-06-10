@@ -14,13 +14,18 @@ import './App.css';
 setupAxiosInterceptors();
 
 const patientModules = [
-    { title: 'Solicitar Cita', description: 'Reserva una nueva cita medica o consulta tus pendientes.', path: '/agendamientos' },
-    { title: 'Historial medico', description: 'Consulta antecedentes, signos vitales y evolucion.', path: '/historial-medico' },
+    { title: 'Agendamiento', description: 'Reserva citas médicas o consulta tus pendientes.', path: '/agendamientos' },
+    { title: 'Triaje Médico', description: 'Realiza tu autoevaluación de salud antes de la cita.', path: '/triage' },
+    { title: 'Historial Médico', description: 'Consulta antecedentes, signos vitales y evolución.', path: '/historial-medico' },
+    { title: 'Videoconferencia', description: 'Accede a tu consulta médica virtual.', path: '/videoconferencia' },
 ];
 
 const doctorModules = [
-    { title: 'Pacientes', description: 'Consulta el directorio clinico y datos de contacto.', path: '/pacientes' },
+    { title: 'Gestión de Pacientes', description: 'Consulta el directorio clínico y datos de contacto.', path: '/pacientes' },
     { title: 'Agenda Médica', description: 'Visualiza tus citas programadas y accede a telemedicina.', path: '/agendamientos' },
+    { title: 'Triaje', description: 'Evaluación de síntomas y clasificación de niveles de riesgo.', path: '/triage' },
+    { title: 'Historial Clínico', description: 'Consulta antecedentes y evolución del paciente.', path: '/historial-medico' },
+    { title: 'Videoconferencia', description: 'Inicia consultas virtuales seguras.', path: '/videoconferencia' },
 ];
 
 const publicFeatures = [
@@ -72,7 +77,7 @@ function PublicLanding() {
                         src="/trabajo.png"
                         alt="Profesional de salud revisando una consulta medica digital"
                         loading="eager"
-                        fetchPriority="high"
+                        fetchpriority="high"
                         width="800"
                         height="350"
                         className="landing-visual"
@@ -124,7 +129,7 @@ function PublicLanding() {
 
 function HomePage() {
     const { isAuthenticated, user } = useAuth();
-    const modules = user?.role === 'medico' ? doctorModules : patientModules;
+    const modules = user?.rol?.toLowerCase() === 'medico' ? doctorModules : patientModules;
 
     if (isAuthenticated) {
         return (
@@ -132,7 +137,7 @@ function HomePage() {
                 <section className="hero-card welcome-hero" aria-labelledby="welcome-title">
                     <p className="eyebrow" style={{ color: '#175cd3' }}>Centro operativo</p>
                     <h1 id="welcome-title">
-                        Hola, {user?.username || 'usuario'}. {user?.role === 'medico' ? 'Tu panel medico esta listo.' : 'Tu portal de salud esta listo.'}
+                        Hola, {user?.nombre || user?.username || 'usuario'}. {user?.rol?.toLowerCase() === 'medico' ? 'Tu panel médico está listo.' : 'Tu portal de salud está listo.'}
                     </h1>
                     <p className="muted">
                         Continua con citas, triage y seguimiento clinico desde una interfaz clara, rapida y confiable.
@@ -159,7 +164,7 @@ function HomePage() {
 function Navigation() {
     const { isAuthenticated, user, logout } = useAuth();
     const navigate = useNavigate();
-    const modules = user?.role === 'medico' ? doctorModules : patientModules;
+    const modules = user?.rol?.toLowerCase() === 'medico' ? doctorModules : patientModules;
 
     const handleLogout = async () => {
         await logout();
@@ -216,7 +221,7 @@ function MainApp() {
                     <Route
                         path="/triage"
                         element={
-                            <ProtectedRoute allowedRoles={['medico']}>
+                            <ProtectedRoute allowedRoles={['paciente', 'medico']}>
                                 <TriagePage />
                             </ProtectedRoute>
                         }
@@ -240,7 +245,7 @@ function MainApp() {
                     <Route
                         path="/videoconferencia"
                         element={
-                            <ProtectedRoute allowedRoles={['medico']}>
+                            <ProtectedRoute allowedRoles={['paciente', 'medico']}>
                                 <VideoconferenciaPage />
                             </ProtectedRoute>
                         }

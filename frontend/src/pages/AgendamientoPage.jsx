@@ -162,7 +162,7 @@ const AgendamientoPage = () => {
     }));
 
     const pacienteOptions = pacientes.map((p) => ({
-        label: `${p.nombre || p.nombre_usuario} (${p.numero_documento || 'N/A'})`,
+        label: `${p.nombre || 'Paciente'} (${p.correo || 'S/C'})`,
         value: p.id,
     }));
 
