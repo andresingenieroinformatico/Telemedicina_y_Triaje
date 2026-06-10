@@ -50,10 +50,12 @@ const DashboardPage = () => {
         },
         {
             id: '05',
-            title: 'Gestión de Usuarios',
-            desc: 'Administra cuentas, roles y accesos del sistema.',
-            path: '/usuarios',
-            icon: '👥',
+            title: user?.rol?.toLowerCase() === 'medico' ? 'Pacientes' : 'Gestión de Usuarios',
+            desc: user?.rol?.toLowerCase() === 'medico' 
+                ? 'Consulta el directorio de pacientes, datos de contacto y edad.' 
+                : 'Administra cuentas, roles y accesos del sistema.',
+            path: user?.rol?.toLowerCase() === 'medico' ? '/pacientes' : '/usuarios',
+            icon: '👤',
             color: '#667085'
         }
     ];

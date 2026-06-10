@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AgendamientoService from '../services/agendamiento.service';
 import MedicoService from '../services/medico.service';
 import PacienteService from '../services/paciente.service';
@@ -6,6 +7,7 @@ import EspecialidadService from '../services/especialidad.service';
 import { Alert, Button, Input, Select, FormGroup, Spinner, Table } from '../components/UIComponents';
 
 const AgendamientoPage = () => {
+    const navigate = useNavigate();
     const [tab, setTab] = useState('listar');
     const [agendamientos, setAgendamientos] = useState([]);
     const [medicos, setMedicos] = useState([]);
@@ -235,7 +237,16 @@ const AgendamientoPage = () => {
                                     key: 'acciones',
                                     label: 'Acciones',
                                     render: (_, row) => (
-                                        <>
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                            {(row.estado === 'CONFIRMADA' || row.estado === 'EN_CURSO') && (
+                                                <Button
+                                                    variant="primary"
+                                                    onClick={() => navigate(`/videoconferencia?citaId=${row.id}`)}
+                                                    style={{ minHeight: '34px', padding: '7px 10px', fontSize: '0.82rem' }}
+                                                >
+                                                    Videoconferencia
+                                                </Button>
+                                            )}
                                             {row.estado !== 'CANCELADA' && row.estado !== 'COMPLETADA' && (
                                                 <Button
                                                     variant="danger"
@@ -245,7 +256,7 @@ const AgendamientoPage = () => {
                                                     Cancelar
                                                 </Button>
                                             )}
-                                        </>
+                                        </div>
                                     ),
                                 },
                             ]}

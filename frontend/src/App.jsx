@@ -21,7 +21,7 @@ const patientModules = [
 ];
 
 const doctorModules = [
-    { title: 'Gestión de Pacientes', description: 'Consulta el directorio clínico y datos de contacto.', path: '/pacientes' },
+    { title: 'Pacientes', description: 'Consulta el directorio clínico y datos de contacto.', path: '/pacientes' },
     { title: 'Agenda Médica', description: 'Visualiza tus citas programadas y accede a telemedicina.', path: '/agendamientos' },
     { title: 'Triaje', description: 'Evaluación de síntomas y clasificación de niveles de riesgo.', path: '/triage' },
     { title: 'Historial Clínico', description: 'Consulta antecedentes y evolución del paciente.', path: '/historial-medico' },
