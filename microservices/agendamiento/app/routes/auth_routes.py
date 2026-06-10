@@ -11,7 +11,7 @@ from flask_jwt_extended import (
 from flask_jwt_extended import set_access_cookies, unset_jwt_cookies
 from marshmallow import Schema, fields, ValidationError, validate
 
-from microservices.videoconferencias.app import db
+from app import db
 from app.models import Usuario, Paciente
 from app.utils import success_response, error_response
 
@@ -172,7 +172,7 @@ def register():
             "id": usuario.id,
             "username": usuario.username,
             "email": usuario.email,
-            "rol": usuario.rol,
+            "role": usuario.rol,
         },
         message="Usuario registrado exitosamente.",
         status_code=201
@@ -204,7 +204,7 @@ def me():
             "id": usuario.id,
             "username": usuario.username,
             "email": usuario.email,
-            "rol": usuario.rol,
+            "role": usuario.rol,
             "activo": usuario.activo,
         }
     )

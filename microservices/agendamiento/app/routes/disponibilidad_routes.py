@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from marshmallow import ValidationError
 
-from microservices.videoconferencias.app import db
+from app import db
 from app.models import Medico, DisponibilidadMedico
 from app.schemas import (
     disponibilidad_schema, disponibilidades_schema,
