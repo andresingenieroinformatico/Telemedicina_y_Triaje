@@ -63,7 +63,7 @@ def login():
         identity=str(usuario.id),
         additional_claims={
             "username": usuario.username,
-            "rol": usuario.rol,
+            "role": usuario.rol,
             "email": usuario.email,
         }
     )
@@ -75,7 +75,7 @@ def login():
                 "id": usuario.id,
                 "username": usuario.username,
                 "email": usuario.email,
-                "rol": usuario.rol,
+                "role": usuario.rol,
             }
         },
         message="Autenticación exitosa.",
@@ -104,13 +104,13 @@ def login_cookie():
 
     access_token = create_access_token(identity=str(usuario.id), additional_claims={
         "username": usuario.username,
-        "rol": usuario.rol,
+        "role": usuario.rol,
         "email": usuario.email,
     })
 
     # Construir respuesta y setear cookie
     resp, code = success_response(
-        data={"usuario": {"id": usuario.id, "username": usuario.username, "email": usuario.email, "rol": usuario.rol}},
+        data={"usuario": {"id": usuario.id, "username": usuario.username, "email": usuario.email, "role": usuario.rol}},
         message="Autenticación exitosa.",
         status_code=200,
     )

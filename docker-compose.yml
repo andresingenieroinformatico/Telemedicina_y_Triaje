@@ -49,6 +49,16 @@ services:
     depends_on:
       - db
 
+  # Microservicio de Videoconferencias
+  videoconferencias-service:
+    build: ./microservices/videoconferencias
+    container_name: videoconferencias_ms
+    restart: always
+    ports:
+      - "5003:5003"
+    depends_on:
+      - db
+
   # API Gateway (Punto de entrada único para el Frontend)
   gateway:
     build: .
@@ -60,11 +70,13 @@ services:
       - USUARIOS_SERVICE_URL=http://usuarios-service:5002
       - AGENDAMIENTO_SERVICE_URL=http://agendamiento-service:5000/api/v1
       - TRIAGE_SERVICE_URL=http://triage-service:5001
+      - VIDEOCONFERENCIAS_SERVICE_URL=http://videoconferencias-service:5003
       - JWT_SECRET=super-secret-key
     depends_on:
       - usuarios-service
       - agendamiento-service
       - triage-service
+      - videoconferencias-service
 
 volumes:
   postgres_data:

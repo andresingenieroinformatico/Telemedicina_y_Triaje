@@ -10,3 +10,6 @@ class Config:
     DATABASE_URL = os.getenv("DATABASE_URL", "")
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # ─── Jitsi Meet ─────────────────────────────────────────────────────────
+    JITSI_SERVER_URL = os.getenv("JITSI_SERVER_URL", "https://meet.jit.si")
