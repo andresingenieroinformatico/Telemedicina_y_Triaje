@@ -5,9 +5,9 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import TriagePage from './pages/TriagePage';
 import AgendamientoPage from './pages/AgendamientoPage';
-import UsuariosPage from './pages/UsuariosPage';
 import HistorialMedicoPage from './pages/HistorialMedicoPage';
 import PacientesPage from './pages/PacientesPage';
+import VideoconferenciaPage from './pages/VideoconferenciaPage';
 import { setupAxiosInterceptors } from './services/axios.interceptors';
 import './App.css';
 
@@ -24,7 +24,7 @@ const doctorModules = [
     { title: 'Agenda', description: 'Gestiona reservas y disponibilidad medica.', path: '/agendamientos' },
     { title: 'Pacientes', description: 'Consulta el directorio clinico y datos de contacto.', path: '/pacientes' },
     { title: 'Historial medico', description: 'Accede a antecedentes y seguimiento clinico.', path: '/historial-medico' },
-    { title: 'Usuarios', description: 'Administra cuentas, roles y acceso del equipo.', path: '/usuarios' },
+    { title: 'Videoconferencia', description: 'Inicia consultas virtuales seguras con tus pacientes.', path: '/videoconferencia' },
 ];
 
 const publicFeatures = [
@@ -128,10 +128,10 @@ const MainApp = () => {
                         }
                     />
                     <Route
-                        path="/usuarios"
+                        path="/videoconferencia"
                         element={
                             <ProtectedRoute allowedRoles={['medico']}>
-                                <UsuariosPage />
+                                <VideoconferenciaPage />
                             </ProtectedRoute>
                         }
                     />

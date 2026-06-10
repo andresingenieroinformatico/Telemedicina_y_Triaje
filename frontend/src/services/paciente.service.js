@@ -26,8 +26,8 @@ class PacienteService {
 
     async listar(filtros = {}) {
         try {
-            // Agregamos el prefijo /api/v1 que requiere el microservicio de agendamiento
-            const response = await this.client.get(`/api/v1${API_ENDPOINTS.PACIENTES.LIST}`, {
+            // El prefijo /api/v1 ya lo maneja el Gateway o la configuración base
+            const response = await this.client.get(API_ENDPOINTS.PACIENTES.LIST, {
                 params: filtros,
             });
             return response.data;
