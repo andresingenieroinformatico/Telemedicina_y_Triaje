@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usuarios-deployment
+  namespace: telemedicina
+spec:
+  replicas: 2 # Escalabilidad inicial
+  selector:
+    matchLabels:
+      app: usuarios
+  template:
+    metadata:
+      labels:
+        app: usuarios
+    spec:
+      containers:
+      - name: usuarios-ms
+        image: telemedicina/usuarios:latest # Asume que la imagen está en un registro
+        ports:
+        - containerPort: 5002
+        env:
+        - name: DATABASE_URL
+          valueFrom: { secretKeyRef: { name: app-secrets, key: DB_URL_USUARIOS } }
+        - name: JWT_SECRET
+          valueFrom: { secretKeyRef: { name: app-secrets, key: JWT_SECRET } }
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /pacientes # O un endpoint de salud
+            port: 5002
+          initialDelaySeconds: 15
+          periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: usuarios-service
+  namespace: telemedicina
+spec:
+  selector:
+    app: usuarios
+  ports:
+    - protocol: TCP
+      port: 5002
+      targetPort: 5002
+  type: ClusterIP
