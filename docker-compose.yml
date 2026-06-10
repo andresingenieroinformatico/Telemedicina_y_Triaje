@@ -67,8 +67,9 @@ services:
     ports:
       - "8080:8080"
     environment:
+      # Usamos nombres de servicios de Docker. Eliminamos /api/v1 si el Gateway lo añade manualmente
       - USUARIOS_SERVICE_URL=http://usuarios-service:5002
-      - AGENDAMIENTO_SERVICE_URL=http://agendamiento-service:5000/api/v1
+      - AGENDAMIENTO_SERVICE_URL=http://agendamiento-service:5000
       - TRIAGE_SERVICE_URL=http://triage-service:5001
       - VIDEOCONFERENCIAS_SERVICE_URL=http://videoconferencias-service:5003
       - JWT_SECRET=super-secret-key

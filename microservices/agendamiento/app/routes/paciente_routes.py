@@ -21,7 +21,7 @@ def listar():
 
 
 @paciente_bp.route("", methods=["POST"])
-@require_role("ADMIN")
+@require_role("MEDICO")
 def crear():
     json_data = request.get_json()
     if not json_data:
@@ -61,7 +61,7 @@ def buscar_por_documento(numero_documento: str):
 
 
 @paciente_bp.route("/<int:paciente_id>", methods=["PUT"])
-@require_role("ADMIN")
+@require_role("MEDICO")
 def actualizar(paciente_id: int):
     paciente = Paciente.query.get(paciente_id)
     if not paciente:

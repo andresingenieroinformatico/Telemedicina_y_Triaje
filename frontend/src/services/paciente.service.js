@@ -26,8 +26,9 @@ class PacienteService {
 
     async listar(filtros = {}) {
         try {
-            // El prefijo /api/v1 ya lo maneja el Gateway o la configuración base
-            const response = await this.client.get(API_ENDPOINTS.PACIENTES.LIST, {
+            // Quitamos la barra inicial si API_ENDPOINTS.PACIENTES.LIST la tiene
+            const endpoint = API_ENDPOINTS.PACIENTES.LIST.startsWith('/') ? API_ENDPOINTS.PACIENTES.LIST.substring(1) : API_ENDPOINTS.PACIENTES.LIST;
+            const response = await this.client.get(endpoint, {
                 params: filtros,
             });
             return response.data;

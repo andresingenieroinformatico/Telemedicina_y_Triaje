@@ -27,7 +27,7 @@ const publicFeatures = [
     ['Agenda inteligente', 'Reserva consultas en pocos pasos y consulta disponibilidad con una experiencia sin friccion.', '01'],
     ['Triage guiado', 'Prioriza sintomas y orientacion clinica para responder con mas velocidad y seguridad.', '02'],
     ['Historial centralizado', 'Antecedentes, medicamentos y evolucion clinica en una vista clara y accionable.', '03'],
-    ['Flujos por rol', 'Experiencias diferenciadas para pacientes, medicos y equipos administrativos.', '04'],
+    ['Flujos por rol', 'Experiencias diferenciadas para pacientes y medicos.', '04'],
 ];
 
 const conversionHighlights = [
