@@ -14,7 +14,6 @@ import './App.css';
 setupAxiosInterceptors();
 
 const patientModules = [
-    { title: 'Triage', description: 'Evalua sintomas y prioriza la atencion clinica.', path: '/triage' },
     { title: 'Agendamientos', description: 'Reserva, consulta y administra tus citas medicas.', path: '/agendamientos' },
     { title: 'Historial medico', description: 'Consulta antecedentes, signos vitales y evolucion.', path: '/historial-medico' },
 ];
@@ -106,7 +105,7 @@ const MainApp = () => {
                     <Route
                         path="/triage"
                         element={
-                            <ProtectedRoute allowedRoles={['paciente', 'medico']}>
+                            <ProtectedRoute allowedRoles={['medico']}>
                                 <TriagePage />
                             </ProtectedRoute>
                         }

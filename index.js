@@ -23,15 +23,31 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
+// Middleware para verificar roles específicos
+const authorizeRole = (role) => (req, res, next) => {
+    // Normalizamos para aceptar 'role' o 'rol' proveniente del JWT de Python
+    const userRole = req.user.role || req.user.rol;
+    if (req.user && userRole.toLowerCase() === role.toLowerCase()) {
+        next();
+    } else {
+        res.status(403).json({ message: `Acceso denegado: se requiere rol de ${role}` });
+    }
+};
+
 // Configuración de ruteo dinámico hacia microservicios
 const services = [
-    { path: '/api/usuarios', target: process.env.USUARIOS_SERVICE_URL },
-    { path: '/api/agendamiento', target: process.env.AGENDAMIENTO_SERVICE_URL },
-    { path: '/api/triage', target: process.env.TRIAGE_SERVICE_URL },
+    { path: '/api/usuarios', target: process.env.USUARIOS_SERVICE_URL, secure: false },
+    // Asegúrate de que el target incluya el prefijo base si el microservicio lo requiere
+    { path: '/api/agendamiento', target: `${process.env.AGENDAMIENTO_SERVICE_URL}/api/v1`, secure: true },
+    { path: '/api/triage', target: process.env.TRIAGE_SERVICE_URL, secure: true, requiredRole: 'medico' },
 ];
 
 services.forEach(service => {
-    app.use(service.path, createProxyMiddleware({
+    const middlewares = [];
+    if (service.secure) middlewares.push(authenticateToken);
+    if (service.requiredRole) middlewares.push(authorizeRole(service.requiredRole));
+
+    app.use(service.path, ...middlewares, createProxyMiddleware({
         target: service.target,
         changeOrigin: true,
         pathRewrite: { [`^${service.path}`]: '' }, // Limpia el prefijo antes de enviar al MS

@@ -51,7 +51,7 @@ services:
 
   # API Gateway (Punto de entrada único para el Frontend)
   gateway:
-    build: ./gateway
+    build: .
     container_name: api_gateway
     restart: always
     ports:
