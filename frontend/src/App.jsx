@@ -106,7 +106,7 @@ const MainApp = () => {
                     <Route
                         path="/triage"
                         element={
-                            <ProtectedRoute allowedRoles={['paciente', 'medico']}>
+                            <ProtectedRoute allowedRoles={['medico']}>
                                 <TriagePage />
                             </ProtectedRoute>
                         }

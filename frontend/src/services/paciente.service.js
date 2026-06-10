@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_BASE_URLS, API_ENDPOINTS } from './api.config';
+import { API_ENDPOINTS } from './api.config';
 
 /**
  * Cliente HTTP para el servicio de Pacientes
@@ -7,7 +7,8 @@ import { API_BASE_URLS, API_ENDPOINTS } from './api.config';
 class PacienteService {
     constructor() {
         this.client = axios.create({
-            baseURL: API_BASE_URLS.AGENDAMIENTO,
+            // Ahora apunta al Gateway en el sub-recurso de agendamiento
+            baseURL: `${process.env.REACT_APP_API_URL || 'http://localhost:8080/api'}/agendamiento`,
             withCredentials: true,
             headers: {
                 'Content-Type': 'application/json',
@@ -25,7 +26,8 @@ class PacienteService {
 
     async listar(filtros = {}) {
         try {
-            const response = await this.client.get(API_ENDPOINTS.PACIENTES.LIST, {
+            // Agregamos el prefijo /api/v1 que requiere el microservicio de agendamiento
+            const response = await this.client.get(`/api/v1${API_ENDPOINTS.PACIENTES.LIST}`, {
                 params: filtros,
             });
             return response.data;

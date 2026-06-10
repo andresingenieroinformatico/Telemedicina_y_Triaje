@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: videoconferencias_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: videoconferencias
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Microservicio de Usuarios y Autenticación
+  usuarios-service:
+    build: ./microservices/usuarios
+    container_name: usuarios_ms
+    restart: always
+    ports:
+      - "5002:5002"
+    environment:
+      - DATABASE_URL=postgresql://admin:admin123@db:5432/usuarios
+      - JWT_SECRET=super-secret-key
+    depends_on:
+      - db
+
+  # Microservicio de Agendamiento
+  agendamiento-service:
+    build: ./microservices/agendamiento
+    container_name: agendamiento_ms
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://admin:admin123@db:5432/agendamiento
+    depends_on:
+      - db
+
+  # Microservicio de Triage
+  triage-service:
+    build: ./microservices/triage
+    container_name: triage_ms
+    restart: always
+    ports:
+      - "5001:5001"
+    depends_on:
+      - db
+
+  # API Gateway (Punto de entrada único para el Frontend)
+  gateway:
+    build: .
+    container_name: api_gateway
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - USUARIOS_SERVICE_URL=http://usuarios-service:5002
+      - AGENDAMIENTO_SERVICE_URL=http://agendamiento-service:5000/api/v1
+      - TRIAGE_SERVICE_URL=http://triage-service:5001
+      - JWT_SECRET=super-secret-key
+    depends_on:
+      - usuarios-service
+      - agendamiento-service
+      - triage-service
+
+volumes:
+  postgres_data:
