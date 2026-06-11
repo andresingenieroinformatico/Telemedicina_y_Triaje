@@ -1,11 +1,9 @@
-const BASE_URL = 'http://localhost';
-
 export const API_BASE_URLS = {
-    AGENDAMIENTO: `${BASE_URL}:5000/api/v1`,
-    TRIAGE: `${BASE_URL}:5001/api/v1`,
-    USUARIOS: `${BASE_URL}:5002`, // Nota: Usuarios suele no tener /api/v1 en tus rutas
-    HISTORIAL_MEDICO: `${BASE_URL}:5003/api/v1`,
-    VIDEOCONFERENCIA: `${BASE_URL}:5004/api/v1`,
+    AGENDAMIENTO: process.env.REACT_APP_AGENDAMIENTO_URL || 'http://localhost:5000/api/v1',
+    TRIAGE: process.env.REACT_APP_TRIAGE_URL || 'http://localhost:5001/api/v1',
+    USUARIOS: process.env.REACT_APP_USUARIOS_URL || 'http://localhost:5002',
+    HISTORIAL_MEDICO: process.env.REACT_APP_HISTORIAL_MEDICO_URL || 'http://localhost:5003/api/v1',
+    VIDEOCONFERENCIA: process.env.REACT_APP_VIDEOCONFERENCIA_URL || 'http://localhost:5004/api/v1',
 };
 
 export const API_ENDPOINTS = {
