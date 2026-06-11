@@ -1,9 +1,3 @@
-databases:
-  - name: telemedicina-db
-    databaseName: telemedicina
-    user: admin
-    plan: free
-
 services:
   - type: web
     name: api-usuarios
@@ -13,10 +7,6 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: telemedicina-db
-          property: connectionString
       - key: PYTHON_VERSION
         value: 3.12.0
 
@@ -28,10 +18,6 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn run:app
     envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: telemedicina-db
-          property: connectionString
       - key: PYTHON_VERSION
         value: 3.12.0
 
@@ -43,10 +29,6 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: telemedicina-db
-          property: connectionString
       - key: PYTHON_VERSION
         value: 3.12.0
 
@@ -58,10 +40,6 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn run:app
     envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: telemedicina-db
-          property: connectionString
       - key: PYTHON_VERSION
         value: 3.12.0
 
@@ -73,9 +51,5 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: telemedicina-db
-          property: connectionString
       - key: PYTHON_VERSION
         value: 3.12.0
