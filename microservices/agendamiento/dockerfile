@@ -8,7 +8,7 @@ WORKDIR /app
 # Copia el archivo de requisitos e instala las dependencias
 # Esto se hace primero para aprovechar el cache de Docker si los requisitos no cambian
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
 # Copia el resto del código de la aplicación al directorio de trabajo
 COPY . .
