@@ -9,6 +9,8 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.0
+      - key: PYTHONPATH
+        value: /opt/render/project/src
 
   - type: web
     name: api-agendamiento
@@ -20,6 +22,8 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.0
+      - key: PYTHONPATH
+        value: /opt/render/project/src
 
   - type: web
     name: api-triage
@@ -31,6 +35,8 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.0
+      - key: PYTHONPATH
+        value: /opt/render/project/src
 
   - type: web
     name: api-historial
@@ -42,6 +48,8 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.0
+      - key: PYTHONPATH
+        value: /opt/render/project/src
 
   - type: web
     name: api-video
@@ -53,3 +61,5 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.0
+      - key: PYTHONPATH
+        value: /opt/render/project/src
