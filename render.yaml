@@ -2,11 +2,13 @@ databases:
   - name: telemedicina-db
     databaseName: telemedicina
     user: admin
+    plan: free
 
 services:
   - type: web
     name: api-usuarios
     env: python
+    plan: free
     rootDir: microservices/usuarios/servicio_usuarios
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
@@ -21,6 +23,7 @@ services:
   - type: web
     name: api-agendamiento
     env: python
+    plan: free
     rootDir: microservices/agendamiento
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn run:app
@@ -35,6 +38,7 @@ services:
   - type: web
     name: api-triage
     env: python
+    plan: free
     rootDir: microservices/triage
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
@@ -49,6 +53,7 @@ services:
   - type: web
     name: api-historial
     env: python
+    plan: free
     rootDir: microservices/historial_medico
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn run:app
@@ -63,6 +68,7 @@ services:
   - type: web
     name: api-video
     env: python
+    plan: free
     rootDir: microservices/videoconferencias
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
