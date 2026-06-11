@@ -4,10 +4,18 @@ Configuraciones de la aplicación Flask por entorno.
 """
 import os
 from datetime import timedelta
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
-load_dotenv()
+load_dotenv(find_dotenv())
 
+def get_db_url():
+    db_url = os.getenv("HISTORIAL_DB_URL") or os.getenv("DATABASE_URL")
+    if db_url:
+        if db_url.startswith("postgres://"):
+            db_url = db_url.replace("postgres://", "postgresql+pg8000://", 1)
+        elif db_url.startswith("postgresql://") and not db_url.startswith("postgresql+pg8000://"):
+            db_url = db_url.replace("postgresql://", "postgresql+pg8000://", 1)
+    return db_url
 
 class Config:
     """Configuración base compartida por todos los entornos."""
@@ -18,16 +26,8 @@ class Config:
     # ── SQLAlchemy ─────────────────────────────────────────
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    @staticmethod
-    def _build_db_uri():
-        user = os.getenv("DB_USER", "postgres")
-        pwd  = os.getenv("DB_PASSWORD", "postgres")
-        host = os.getenv("DB_HOST", "localhost")
-        port = os.getenv("DB_PORT", "5432")
-        name = os.getenv("DB_NAME", "historial_medico_db")
-        return f"postgresql://{user}:{pwd}@{host}:{port}/{name}"
+    SQLALCHEMY_DATABASE_URI = get_db_url()
 
-    SQLALCHEMY_DATABASE_URI = _build_db_uri.__func__()   # evaluated once at import
 
     # ── JWT ────────────────────────────────────────────────
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "jwt-dev-secret")

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from servicio_usuarios.models import db, Paciente
+from models import db, Paciente
 
 pacientes_bp = Blueprint('pacientes', __name__)
 
@@ -28,17 +28,4 @@ def crear_paciente():
 def obtener_pacientes():
 
     pacientes = Paciente.query.all()
-
-    resultado = []
-
-    for paciente in pacientes:
-
-        resultado.append({
-            "id": paciente.id,
-            "nombre": paciente.nombre,
-            "correo": paciente.correo,
-            "telefono": paciente.telefono,
-            "edad": paciente.edad
-        })
-
-    return jsonify(resultado)
+    return jsonify([paciente.to_dict() for paciente in pacientes])

@@ -5,32 +5,39 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import TriagePage from './pages/TriagePage';
 import AgendamientoPage from './pages/AgendamientoPage';
-import UsuariosPage from './pages/UsuariosPage';
 import HistorialMedicoPage from './pages/HistorialMedicoPage';
 import PacientesPage from './pages/PacientesPage';
+import VideoconferenciaPage from './pages/VideoconferenciaPage';
 import { setupAxiosInterceptors } from './services/axios.interceptors';
 import './App.css';
 
 setupAxiosInterceptors();
 
 const patientModules = [
+<<<<<<< HEAD
     { title: 'Agendamientos', description: 'Reserva, consulta y administra tus citas medicas.', path: '/agendamientos' },
     { title: 'Historial medico', description: 'Consulta antecedentes, signos vitales y evolucion.', path: '/historial-medico' },
+=======
+    { title: 'Agendamiento', description: 'Reserva citas médicas o consulta tus pendientes.', path: '/agendamientos' },
+    { title: 'Triaje Médico', description: 'Realiza tu autoevaluación de salud antes de la cita.', path: '/triage' },
+    { title: 'Historial Médico', description: 'Consulta antecedentes, signos vitales y evolución.', path: '/historial-medico' },
+    { title: 'Videoconferencia', description: 'Accede a tu consulta médica virtual.', path: '/videoconferencia' },
+>>>>>>> d9980eb2c29e366c386e8fa7c94f0d4edf58660d
 ];
 
 const doctorModules = [
-    { title: 'Pacientes en triage', description: 'Revisa casos, riesgo y prioridad de atencion.', path: '/triage' },
-    { title: 'Agenda', description: 'Gestiona reservas y disponibilidad medica.', path: '/agendamientos' },
-    { title: 'Pacientes', description: 'Consulta el directorio clinico y datos de contacto.', path: '/pacientes' },
-    { title: 'Historial medico', description: 'Accede a antecedentes y seguimiento clinico.', path: '/historial-medico' },
-    { title: 'Usuarios', description: 'Administra cuentas, roles y acceso del equipo.', path: '/usuarios' },
+    { title: 'Pacientes', description: 'Consulta el directorio clínico y datos de contacto.', path: '/pacientes' },
+    { title: 'Agenda Médica', description: 'Visualiza tus citas programadas y accede a telemedicina.', path: '/agendamientos' },
+    { title: 'Triaje', description: 'Evaluación de síntomas y clasificación de niveles de riesgo.', path: '/triage' },
+    { title: 'Historial Clínico', description: 'Consulta antecedentes y evolución del paciente.', path: '/historial-medico' },
+    { title: 'Videoconferencia', description: 'Inicia consultas virtuales seguras.', path: '/videoconferencia' },
 ];
 
 const publicFeatures = [
     ['Agenda inteligente', 'Reserva consultas en pocos pasos y consulta disponibilidad con una experiencia sin friccion.', '01'],
     ['Triage guiado', 'Prioriza sintomas y orientacion clinica para responder con mas velocidad y seguridad.', '02'],
     ['Historial centralizado', 'Antecedentes, medicamentos y evolucion clinica en una vista clara y accionable.', '03'],
-    ['Flujos por rol', 'Experiencias diferenciadas para pacientes, medicos y equipos administrativos.', '04'],
+    ['Flujos por rol', 'Experiencias diferenciadas para pacientes y medicos.', '04'],
 ];
 
 const conversionHighlights = [
@@ -45,10 +52,124 @@ const processSteps = [
     ['03', 'Actua con claridad', 'Gestiona citas, sintomas y seguimiento con menos esfuerzo.'],
 ];
 
-const Navigation = () => {
+// --- COMPONENTES LOCALES (Movidos arriba y convertidos a function para hoisting) ---
+
+function PublicLanding() {
+    return (
+        <main className="page-shell">
+            <section className="hero-layout" aria-labelledby="home-title">
+                <article className="hero-panel">
+                    <p className="eyebrow">Telemedicina / Triage / Seguimiento</p>
+                    <h1 id="home-title" className="hero-title">
+                        Salud digital que se siente impecable desde el primer clic.
+                    </h1>
+                    <p className="hero-copy">
+                        Una plataforma de telemedicina con agenda, triage e historial clinico disenada para transmitir confianza, velocidad y precision.
+                    </p>
+                    <div className="hero-actions">
+                        <Link to="/login" className="cta">Empezar ahora</Link>
+                        <Link to="/login?mode=register" className="ghost-cta">Crear cuenta</Link>
+                    </div>
+                    <div className="chip-row" aria-label="Beneficios principales">
+                        {['Atencion remota', 'Agenda centralizada', 'Datos clinicos seguros'].map((item) => (
+                            <span key={item} className="trust-chip">{item}</span>
+                        ))}
+                    </div>
+                </article>
+
+                <aside className="insight-panel" aria-label="Indicadores de plataforma">
+                    <img
+                        src="/trabajo.png"
+                        alt="Profesional de salud revisando una consulta medica digital"
+                        loading="eager"
+                        fetchpriority="high"
+                        width="800"
+                        height="350"
+                        className="landing-visual"
+                    />
+                    <div className="metric-grid">
+                        {[
+                            ['24/7', 'Acceso a orientacion y seguimiento'],
+                            ['3 min', 'Tiempo medio para agendar'],
+                            ['95%', 'Satisfaccion del usuario'],
+                            ['360', 'Vista clinica del paciente'],
+                        ].map(([value, label]) => (
+                            <div key={label} className="metric">
+                                <strong>{value}</strong>
+                                <span>{label}</span>
+                            </div>
+                        ))}
+                    </div>
+                </aside>
+            </section>
+
+            <section className="feature-grid" aria-label="Capacidades de la plataforma">
+                {publicFeatures.map(([title, description, icon]) => (
+                    <article key={title} className="feature-card">
+                        <span className="feature-icon" aria-hidden="true">{icon}</span>
+                        <h2>{title}</h2>
+                        <p>{description}</p>
+                    </article>
+                ))}
+            </section>
+
+            <section className="process-section" aria-labelledby="process-title">
+                <div>
+                    <p className="eyebrow" style={{ color: '#175cd3' }}>Conversion simple</p>
+                    <h2 id="process-title">De interes a atencion en tres pasos.</h2>
+                </div>
+                <div className="step-grid">
+                    {processSteps.map(([number, title, description]) => (
+                        <article key={title} className="step-card">
+                            <span>{number}</span>
+                            <strong>{title}</strong>
+                            <p>{description}</p>
+                        </article>
+                    ))}
+                </div>
+            </section>
+        </main>
+    );
+}
+
+function HomePage() {
+    const { isAuthenticated, user } = useAuth();
+    const modules = user?.rol?.toLowerCase() === 'medico' ? doctorModules : patientModules;
+
+    if (isAuthenticated) {
+        return (
+            <main className="page-shell">
+                <section className="hero-card welcome-hero" aria-labelledby="welcome-title">
+                    <p className="eyebrow" style={{ color: '#175cd3' }}>Centro operativo</p>
+                    <h1 id="welcome-title">
+                        Hola, {user?.nombre || user?.username || 'usuario'}. {user?.rol?.toLowerCase() === 'medico' ? 'Tu panel médico está listo.' : 'Tu portal de salud está listo.'}
+                    </h1>
+                    <p className="muted">
+                        Continua con citas, triage y seguimiento clinico desde una interfaz clara, rapida y confiable.
+                    </p>
+                </section>
+
+                <section className="feature-grid" aria-label="Modulos disponibles">
+                    {modules.map((module) => (
+                        <article key={module.title} className="feature-card">
+                            <span className="feature-icon" aria-hidden="true">+</span>
+                            <h2>{module.title}</h2>
+                            <p>{module.description}</p>
+                            <Link to={module.path} className="module-link">Abrir modulo</Link>
+                        </article>
+                    ))}
+                </section>
+            </main>
+        );
+    }
+
+    return <PublicLanding />;
+}
+
+function Navigation() {
     const { isAuthenticated, user, logout } = useAuth();
     const navigate = useNavigate();
-    const modules = user?.role === 'medico' ? doctorModules : patientModules;
+    const modules = user?.rol?.toLowerCase() === 'medico' ? doctorModules : patientModules;
 
     const handleLogout = async () => {
         await logout();
@@ -92,7 +213,7 @@ const Navigation = () => {
     );
 };
 
-const MainApp = () => {
+function MainApp() {
     return (
         <Router>
             <div className="App">
@@ -127,10 +248,10 @@ const MainApp = () => {
                         }
                     />
                     <Route
-                        path="/usuarios"
+                        path="/videoconferencia"
                         element={
-                            <ProtectedRoute allowedRoles={['medico']}>
-                                <UsuariosPage />
+                            <ProtectedRoute allowedRoles={['paciente', 'medico']}>
+                                <VideoconferenciaPage />
                             </ProtectedRoute>
                         }
                     />
@@ -148,166 +269,12 @@ const MainApp = () => {
     );
 };
 
-const App = () => {
+function App() {
     return (
         <AuthProvider>
             <MainApp />
         </AuthProvider>
     );
-};
-
-const HomePage = () => {
-    const { isAuthenticated, user } = useAuth();
-    const modules = user?.role === 'medico' ? doctorModules : patientModules;
-
-    if (isAuthenticated) {
-        return (
-            <main className="page-shell">
-                <section className="hero-card welcome-hero" aria-labelledby="welcome-title">
-                    <p className="eyebrow" style={{ color: '#175cd3' }}>Centro operativo</p>
-                    <h1 id="welcome-title">
-                        Hola, {user?.username || 'usuario'}. {user?.role === 'medico' ? 'Tu panel medico esta listo.' : 'Tu portal de salud esta listo.'}
-                    </h1>
-                    <p className="muted">
-                        Continua con citas, triage y seguimiento clinico desde una interfaz clara, rapida y confiable.
-                    </p>
-                </section>
-
-                <section className="feature-grid" aria-label="Modulos disponibles">
-                    {modules.map((module) => (
-                        <article key={module.title} className="feature-card">
-                            <span className="feature-icon" aria-hidden="true">+</span>
-                            <h2>{module.title}</h2>
-                            <p>{module.description}</p>
-                            <Link to={module.path} className="module-link">Abrir modulo</Link>
-                        </article>
-                    ))}
-                </section>
-            </main>
-        );
-    }
-
-    return <PublicLanding />;
-};
-
-const PublicLanding = () => {
-    return (
-        <main className="page-shell">
-            <section className="hero-layout" aria-labelledby="home-title">
-                <article className="hero-panel">
-                    <p className="eyebrow">Telemedicina / Triage / Seguimiento</p>
-                    <h1 id="home-title" className="hero-title">
-                        Salud digital que se siente impecable desde el primer clic.
-                    </h1>
-                    <p className="hero-copy">
-                        Una plataforma de telemedicina con agenda, triage e historial clinico disenada para transmitir confianza, velocidad y precision.
-                    </p>
-                    <div className="hero-actions">
-                        <Link to="/login" className="cta">Empezar ahora</Link>
-                        <Link to="/login?mode=register" className="ghost-cta">Crear cuenta</Link>
-                    </div>
-                    <div className="chip-row" aria-label="Beneficios principales">
-                        {['Atencion remota', 'Agenda centralizada', 'Datos clinicos seguros'].map((item) => (
-                            <span key={item} className="trust-chip">{item}</span>
-                        ))}
-                    </div>
-                </article>
-
-                <aside className="insight-panel" aria-label="Indicadores de plataforma">
-                    <img
-                        src="/trabajo.png"
-                        alt="Profesional de salud revisando una consulta medica digital"
-                        loading="eager"
-                        fetchPriority="high"
-                        width="800"
-                        height="350"
-                        className="landing-visual"
-                    />
-                    <div className="metric-grid">
-                        {[
-                            ['24/7', 'Acceso a orientacion y seguimiento'],
-                            ['3 min', 'Tiempo medio para agendar'],
-                            ['95%', 'Satisfaccion del usuario'],
-                            ['360', 'Vista clinica del paciente'],
-                        ].map(([value, label]) => (
-                            <div key={label} className="metric">
-                                <strong>{value}</strong>
-                                <span>{label}</span>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="clinical-proof">
-                        <strong>Experiencia preparada para usuarios frios</strong>
-                        <span>Jerarquia clara, CTA visible y mensajes de confianza para reducir rebote desde campanas pagas.</span>
-                    </div>
-                </aside>
-            </section>
-
-            <section className="conversion-strip" aria-label="Beneficios para conversion">
-                {conversionHighlights.map(([title, description]) => (
-                    <article key={title}>
-                        <strong>{title}</strong>
-                        <span>{description}</span>
-                    </article>
-                ))}
-            </section>
-
-            <section className="feature-grid" aria-label="Capacidades de la plataforma">
-                {publicFeatures.map(([title, description, icon]) => (
-                    <article key={title} className="feature-card">
-                        <span className="feature-icon" aria-hidden="true">{icon}</span>
-                        <h2>{title}</h2>
-                        <p>{description}</p>
-                    </article>
-                ))}
-            </section>
-
-            <section className="two-col" aria-label="Confianza y conversion">
-                <article className="section-panel">
-                    <h2>Confianza en segundos</h2>
-                    <ul>
-                        <li>Flujos simples para pacientes y medicos.</li>
-                        <li>Integracion visual entre agenda, triage e historial.</li>
-                        <li>Interfaz rapida, accesible y optimizada para conversion.</li>
-                    </ul>
-                </article>
-
-                <article className="section-panel">
-                    <h2>Primer paso sin friccion</h2>
-                    <ol>
-                        <li>Inicia sesion o crea tu cuenta.</li>
-                        <li>Accede al modulo que necesitas.</li>
-                        <li>Gestiona citas, evaluaciones y seguimiento clinico.</li>
-                    </ol>
-                </article>
-            </section>
-
-            <section className="process-section" aria-labelledby="process-title">
-                <div>
-                    <p className="eyebrow" style={{ color: '#175cd3' }}>Conversion simple</p>
-                    <h2 id="process-title">De interes a atencion en tres pasos.</h2>
-                </div>
-                <div className="step-grid">
-                    {processSteps.map(([number, title, description]) => (
-                        <article key={title} className="step-card">
-                            <span>{number}</span>
-                            <strong>{title}</strong>
-                            <p>{description}</p>
-                        </article>
-                    ))}
-                </div>
-            </section>
-
-            <section className="final-cta" aria-labelledby="final-cta-title">
-                <div>
-                    <p className="eyebrow">Listo para probar</p>
-                    <h2 id="final-cta-title">Convierte visitas frias en pacientes activos.</h2>
-                    <p>Una experiencia visualmente confiable, rapida de entender y preparada para campanas SEM.</p>
-                </div>
-                <Link to="/login?mode=register" className="cta">Crear cuenta</Link>
-            </section>
-        </main>
-    );
-};
+}
 
 export default App;
