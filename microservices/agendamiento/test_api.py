@@ -21,6 +21,7 @@ def print_response(title, response):
 
 def test_api():
     """Ejecuta pruebas de endpoints."""
+    print(f"🚀 Iniciando pruebas contra: {BASE_URL}")
     token = None
     errors = 0
     
