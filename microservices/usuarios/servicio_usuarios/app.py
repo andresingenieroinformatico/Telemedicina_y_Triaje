@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_cors import CORS
 from config import Config 
@@ -17,4 +18,5 @@ migrate = Migrate(app, db)
 app.register_blueprint(pacientes_bp, url_prefix="/api/v1")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5002, debug=False)
+    port = int(os.environ.get("PORT", 5002))
+    app.run(host="0.0.0.0", port=port, debug=False)
