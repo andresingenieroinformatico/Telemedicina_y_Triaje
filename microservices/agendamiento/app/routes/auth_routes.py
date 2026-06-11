@@ -10,7 +10,6 @@ from flask_jwt_extended import (
 )
 from flask_jwt_extended import set_access_cookies, unset_jwt_cookies
 from marshmallow import Schema, fields, ValidationError, validate
-
 from app import db
 from app.models import Usuario, Paciente
 from app.utils import success_response, error_response
@@ -42,8 +41,8 @@ def login():
     Autentica un usuario y retorna token JWT.
     
     Body JSON:
-      - username (requerido)
-      - password (requerido)
+    - username (requerido)
+    - password (requerido)
     """
     json_data = request.get_json()
     if not json_data:
@@ -132,10 +131,10 @@ def register():
     Registra un nuevo usuario (solo para PACIENTES).
     
     Body JSON:
-      - username (requerido)
-      - email (requerido)
-      - password (requerido, mín 8 caracteres)
-      - paciente_id (opcional, para vincular con paciente existente)
+    - username (requerido)
+    - email (requerido)
+    - password (requerido, mín 8 caracteres)
+    - paciente_id (opcional, para vincular con paciente existente)
     """
     json_data = request.get_json()
     if not json_data:

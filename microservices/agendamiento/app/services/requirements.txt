@@ -6,14 +6,7 @@ Flask-JWT-Extended==4.6.0
 flask-marshmallow
 marshmallow==3.21.3
 marshmallow-sqlalchemy
-<<<<<<< HEAD
-Flask-JWT-Extended
-Flask-CORS
-pg8000
-gunicorn
-=======
 flask-cors
 Werkzeug==3.0.3
 psycopg2-binary # Necesario para conectar con PostgreSQL
 python-dotenv
->>>>>>> dfe26eedee2371ff0e9373f90c0459beafe0da4b
