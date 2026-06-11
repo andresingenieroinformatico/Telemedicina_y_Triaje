@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_migrate import Migrate
 from flask_cors import CORS
@@ -37,4 +38,5 @@ def create_app():
 
 if __name__ == "__main__":
     app = create_app()
-    app.run(debug=True, host="0.0.0.0", port=5004)
+    port = int(os.environ.get("PORT", 5004))
+    app.run(debug=False, host="0.0.0.0", port=port)
