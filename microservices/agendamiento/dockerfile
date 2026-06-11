@@ -1,37 +1,22 @@
-﻿FROM python:3.12-slim AS builder
-WORKDIR /install
+# Usa una imagen base oficial de Python
+FROM python:3.10-slim-buster
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+# Establece el directorio de trabajo dentro del contenedor
+# Aquí, /app será la raíz de nuestro microservicio de agendamiento
+WORKDIR /app
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends build-essential libpq-dev gcc \
-    && rm -rf /var/lib/apt/lists/*
+# Copia el archivo de requisitos e instala las dependencias
+# Esto se hace primero para aprovechar el cache de Docker si los requisitos no cambian
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY requirements.txt ./
-RUN pip install --upgrade pip wheel \
-    && pip wheel --wheel-dir=/install/wheels -r requirements.txt
-
-FROM python:3.12-slim AS runtime
-WORKDIR /usr/src/app
-
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-RUN addgroup --system app && adduser --system --ingroup app app
-
-COPY --from=builder /install/wheels /wheels
-RUN pip install --no-cache-dir /wheels/* \
-    && rm -rf /wheels
-
+# Copia el resto del código de la aplicación al directorio de trabajo
 COPY . .
-RUN sed -i 's/\r$//' ./scripts/start.sh \
-    && chmod +x ./scripts/start.sh \
-    && chown -R app:app /usr/src/app
 
-USER app
+# Configura variables de entorno para Flask
+ENV FLASK_APP=app
+ENV FLASK_ENV=production
+ENV PYTHONUNBUFFERED=1
 
-ENV FLASK_APP=run.py
-
+# Expone el puerto en el que se ejecutará la aplicación
 EXPOSE 5000
-ENTRYPOINT ["./scripts/start.sh"]

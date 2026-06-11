@@ -10,8 +10,6 @@ from flask_jwt_extended import (
 )
 from flask_jwt_extended import set_access_cookies, unset_jwt_cookies
 from marshmallow import Schema, fields, ValidationError, validate
-
-from microservices.videoconferencias.app import db
 from app import db
 from app.models import Usuario, Paciente
 from app.utils import success_response, error_response
