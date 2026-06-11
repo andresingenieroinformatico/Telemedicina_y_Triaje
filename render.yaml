@@ -1,0 +1,75 @@
+databases:
+  - name: telemedicina-db
+    databaseName: telemedicina
+    user: admin
+
+services:
+  - type: web
+    name: api-usuarios
+    env: python
+    rootDir: microservices/usuarios/servicio_usuarios
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: telemedicina-db
+          property: connectionString
+      - key: PYTHON_VERSION
+        value: 3.12.0
+
+  - type: web
+    name: api-agendamiento
+    env: python
+    rootDir: microservices/agendamiento
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: telemedicina-db
+          property: connectionString
+      - key: PYTHON_VERSION
+        value: 3.12.0
+
+  - type: web
+    name: api-triage
+    env: python
+    rootDir: microservices/triage
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: telemedicina-db
+          property: connectionString
+      - key: PYTHON_VERSION
+        value: 3.12.0
+
+  - type: web
+    name: api-historial
+    env: python
+    rootDir: microservices/historial_medico
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: telemedicina-db
+          property: connectionString
+      - key: PYTHON_VERSION
+        value: 3.12.0
+
+  - type: web
+    name: api-video
+    env: python
+    rootDir: microservices/videoconferencias
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: telemedicina-db
+          property: connectionString
+      - key: PYTHON_VERSION
+        value: 3.12.0
