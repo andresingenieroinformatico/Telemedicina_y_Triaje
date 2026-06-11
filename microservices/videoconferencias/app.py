@@ -1,25 +1,18 @@
 import os
 from flask import Flask
-from flask_migrate import Migrate
 from flask_cors import CORS
-from config import Config, db
+from routes import video_bp
 
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(Config)
 
     # Permitir peticiones desde el frontend (CORS)
     CORS(app)
 
-    db.init_app(app)
-    Migrate(app, db)  # Habilita: flask db init / migrate / upgrade
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key")
 
-    from routes import video_bp
     app.register_blueprint(video_bp, url_prefix="/api/v1")
-
-    with app.app_context():
-        db.create_all()
 
     @app.errorhandler(404)
     def not_found(e):
