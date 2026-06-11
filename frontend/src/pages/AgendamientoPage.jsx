@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AgendamientoService from '../services/agendamiento.service';
 import MedicoService from '../services/medico.service';
@@ -26,13 +26,40 @@ const AgendamientoPage = () => {
         motivo: '',
     });
 
+    const cargarMedicos = useCallback(async () => {
+        try {
+            const data = await MedicoService.listar();
+            setMedicos(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error('Error al cargar medicos:', err);
+        }
+    }, []);
+
+    const cargarPacientes = useCallback(async () => {
+        try {
+            const data = await PacienteService.listar();
+            setPacientes(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error('Error al cargar pacientes:', err);
+        }
+    }, []);
+
+    const cargarEspecialidades = useCallback(async () => {
+        try {
+            const data = await EspecialidadService.listar();
+            setEspecialidades(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error('Error al cargar especialidades:', err);
+        }
+    }, []);
+
     useEffect(() => {
         cargarEspecialidades();
         cargarMedicos();
         cargarPacientes();
-    }, []);
+    }, [cargarEspecialidades, cargarMedicos, cargarPacientes]);
 
-    const cargarAgendamientos = React.useCallback(async () => {
+    const cargarAgendamientos = useCallback(async () => {
         setLoading(true);
         setError('');
 
@@ -55,33 +82,6 @@ const AgendamientoPage = () => {
             setLoading(false);
         }
     }, [filtros]);
-
-    const cargarMedicos = async () => {
-        try {
-            const data = await MedicoService.listar();
-            setMedicos(Array.isArray(data) ? data : []);
-        } catch (err) {
-            console.error('Error al cargar medicos:', err);
-        }
-    };
-
-    const cargarPacientes = async () => {
-        try {
-            const data = await PacienteService.listar();
-            setPacientes(Array.isArray(data) ? data : []);
-        } catch (err) {
-            console.error('Error al cargar pacientes:', err);
-        }
-    };
-
-    const cargarEspecialidades = async () => {
-        try {
-            const data = await EspecialidadService.listar();
-            setEspecialidades(Array.isArray(data) ? data : []);
-        } catch (err) {
-            console.error('Error al cargar especialidades:', err);
-        }
-    };
 
     useEffect(() => {
         if (tab === 'listar') cargarAgendamientos();
@@ -192,6 +192,9 @@ const AgendamientoPage = () => {
                     <Button type="button" onClick={() => setTab('listar')} variant={tab === 'listar' ? 'primary' : 'secondary'}>
                         Listar agendamientos
                     </Button>
+                    <Button type="button" onClick={() => setTab('pacientes')} variant={tab === 'pacientes' ? 'primary' : 'secondary'}>
+                        Pacientes
+                    </Button>
                     <Button type="button" onClick={() => setTab('crear')} variant={tab === 'crear' ? 'primary' : 'secondary'}>
                         Crear agendamiento
                     </Button>
@@ -265,6 +268,27 @@ const AgendamientoPage = () => {
                                 },
                             ]}
                             data={agendamientos}
+                        />
+                    )}
+                </FormGroup>
+            )}
+
+            {tab === 'pacientes' && (
+                <FormGroup>
+                    <h2>Pacientes registrados</h2>
+                    <p className="muted">Listado de todos los pacientes que pueden ser atendidos en la plataforma.</p>
+                    {loading ? (
+                        <Spinner label="Cargando pacientes..." />
+                    ) : (
+                        <Table
+                            columns={[
+                                { key: 'id', label: 'ID' },
+                                { key: 'nombre', label: 'Nombre' },
+                                { key: 'correo', label: 'Correo' },
+                                { key: 'telefono', label: 'Teléfono' },
+                                { key: 'edad', label: 'Edad' },
+                            ]}
+                            data={pacientes}
                         />
                     )}
                 </FormGroup>
