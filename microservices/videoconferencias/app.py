@@ -36,7 +36,10 @@ def create_app():
     return app
 
 
+# Expose app at module level for gunicorn (gunicorn app:app)
+app = create_app()
+
+
 if __name__ == "__main__":
-    app = create_app()
     port = int(os.environ.get("PORT", 5004))
     app.run(debug=False, host="0.0.0.0", port=port)
