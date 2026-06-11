@@ -1,8 +1,8 @@
 export const API_BASE_URLS = {
     AGENDAMIENTO: process.env.REACT_APP_AGENDAMIENTO_URL || 'http://localhost:5000/api/v1',
-    TRIAGE: process.env.REACT_APP_TRIAGE_URL || 'http://localhost:5001/api/v1',
-    USUARIOS: process.env.REACT_APP_USUARIOS_URL || 'http://localhost:5002',
-    HISTORIAL_MEDICO: process.env.REACT_APP_HISTORIAL_MEDICO_URL || 'http://localhost:5003/api/v1',
+    TRIAGE: process.env.REACT_APP_TRIAGE_URL || 'http://localhost:5001',
+    USUARIOS: process.env.REACT_APP_USUARIOS_URL || 'http://localhost:5002/api/v1',
+    HISTORIAL_MEDICO: process.env.REACT_APP_HISTORIAL_MEDICO_URL || 'http://localhost:5003/api',
     VIDEOCONFERENCIA: process.env.REACT_APP_VIDEOCONFERENCIA_URL || 'http://localhost:5004/api/v1',
 };
 
@@ -49,8 +49,8 @@ export const API_ENDPOINTS = {
         MEDICAMENTOS: '/medicamentos',
     },
     TRIAGE: {
-        EVALUAR: '/evaluar',
-        HISTORIAL: (id) => `/historial/${id}`,
+        EVALUAR: '/triage',
+        HISTORIAL: (id) => `/triage/${id}`,
     },
     DISPONIBILIDAD: {
         GET_MEDICO: (id) => `/medicos/${id}/disponibilidad`,
