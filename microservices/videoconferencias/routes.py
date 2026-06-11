@@ -24,10 +24,10 @@ Participantes
 """
 
 from flask import Blueprint, request, jsonify
-from microservices.videoconferencias.config import db
-from microservices.videoconferencias.models import Sala, Sesion, Participante
+from config import db
+from models import Sala, Sesion, Participante
 from datetime import datetime, timezone
-from microservices.videoconferencias.jitsi_service import generate_room_name, generate_jitsi_url, generate_meeting_link
+from jitsi_service import generate_room_name, generate_jitsi_url, generate_meeting_link
 from sqlalchemy.exc import SQLAlchemyError
 
 video_bp = Blueprint("video", __name__)

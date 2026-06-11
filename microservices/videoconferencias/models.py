@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import List, Optional
 
-from microservices.videoconferencias.config import db
+from config import db
 from sqlalchemy import ForeignKey, Integer, String, Text, Boolean, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 

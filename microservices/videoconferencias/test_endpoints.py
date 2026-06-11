@@ -17,8 +17,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 # Forzar SQLite en memoria ANTES de importar la app
 os.environ["DATABASE_URL"] = "sqlite://"
 
-from microservices.videoconferencias.app import create_app  # noqa: E402
-from microservices.videoconferencias.config import db       # noqa: E402
+from app import create_app  # noqa: E402
+from config import db       # noqa: E402
 
 # ─── Configuración ────────────────────────────────────────────────────────────
 

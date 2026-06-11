@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from flask_migrate import Migrate
 from flask_cors import CORS
-from microservices.videoconferencias.config import Config, db
+from config import Config, db
 
 
 def create_app():
@@ -15,7 +15,7 @@ def create_app():
     db.init_app(app)
     Migrate(app, db)  # Habilita: flask db init / migrate / upgrade
 
-    from microservices.videoconferencias.routes import video_bp
+    from routes import video_bp
     app.register_blueprint(video_bp, url_prefix="/api/v1")
 
     with app.app_context():

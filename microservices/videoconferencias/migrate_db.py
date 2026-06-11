@@ -23,8 +23,8 @@ project_root = os.path.abspath(os.path.join(current_dir, "../../"))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from microservices.videoconferencias.app import create_app
-from microservices.videoconferencias.config import db
+from app import create_app
+from config import db
 
 # ─── Columnas a agregar ───────────────────────────────────────────────────────
 MIGRATIONS = [

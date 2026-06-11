@@ -1,6 +1,6 @@
 import os
 os.environ["DATABASE_URL"] = "sqlite://"
-from microservices.videoconferencias.app import create_app
+from app import create_app
 
 app = create_app()
 with app.app_context():
