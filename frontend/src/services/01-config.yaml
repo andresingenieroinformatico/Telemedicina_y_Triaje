@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secrets
+  namespace: telemedicina
+type: Opaque
+stringData:
+  POSTGRES_USER: "admin"
+  POSTGRES_PASSWORD: "admin123"
+  JWT_SECRET: "super-secret-key-cloud-native"
+  # Formato: postgresql://user:password@service-name:port/db_name
+  DB_URL_USUARIOS: "postgresql://admin:admin123@db-service:5432/usuarios"
+  DB_URL_AGENDAMIENTO: "postgresql://admin:admin123@db-service:5432/agendamiento"
+  DB_URL_VIDEOCONFERENCIAS: "postgresql://admin:admin123@db-service:5432/videoconferencias"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: telemedicina
+data:
+  # URLs internas usando el DNS de Kubernetes: http://<service-name>.<namespace>.svc.cluster.local:<port>
+  USUARIOS_SERVICE_URL: "http://usuarios-service:5002"
+  AGENDAMIENTO_SERVICE_URL: "http://agendamiento-service:5000"
+  TRIAGE_SERVICE_URL: "http://triage-service:5001"
+  HISTORIAL_SERVICE_URL: "http://historial-service:5003"
+  VIDEOCONFERENCIAS_SERVICE_URL: "http://videoconferencias-service:5004"

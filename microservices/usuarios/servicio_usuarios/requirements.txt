@@ -1,0 +1,9 @@
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+pg8000
+SQLAlchemy
+alembic
+gunicorn
+flask-cors
+python-dotenv

@@ -1,0 +1,13 @@
+﻿{
+    "data":  {
+                 "access_token":  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3OTkyMDMxOCwianRpIjoiNTQ5ZWJlMDgtNTU3Mi00YmViLWIzMWEtZWJkZDNiMGFmY2Q5IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3Nzk5MjAzMTgsImNzcmYiOiJlZDQxNjlmNi1lNTc3LTRlZGQtOTZjMS00NGU4YTM0YmNiOTkiLCJleHAiOjE3Nzk5MjM5MTgsInVzZXJuYW1lIjoiaW50dGVzdF9hdXRvIiwicm9sIjoiUEFDSUVOVEUiLCJlbWFpbCI6ImludHRlc3RfYXV0b0BleGFtcGxlLmNvbSJ9.8O-WG-9-UozLRlh9R_kB-Ze5hirmsqebP02almmcjCo",
+                 "usuario":  {
+                                 "email":  "inttest_auto@example.com",
+                                 "id":  1,
+                                 "rol":  "PACIENTE",
+                                 "username":  "inttest_auto"
+                             }
+             },
+    "message":  "Autenticación exitosa.",
+    "success":  true
+}

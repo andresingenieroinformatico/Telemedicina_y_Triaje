@@ -1,0 +1,6 @@
+Flask
+pg8000
+gunicorn
+flask-cors
+python-dotenv
+psycopg2-binary

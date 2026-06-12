@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: telemedicina_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  agendamiento:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      # Conexión a la base de datos PostgreSQL (el nombre del servicio 'db' se usa como host)
+      DATABASE_URL: postgresql://postgres:password@db:5432/telemedicina_db
+      FLASK_ENV: development # Puedes cambiar a 'production' para despliegues finales
+      FLASK_APP: app
+    depends_on:
+      - db # Asegura que la base de datos se inicie antes que el microservicio
+    # Ejecuta las migraciones de la base de datos y luego inicia la aplicación Flask
+    command: >
+      sh -c "flask db upgrade && python run.py"
+
+volumes:
+  postgres_data:
