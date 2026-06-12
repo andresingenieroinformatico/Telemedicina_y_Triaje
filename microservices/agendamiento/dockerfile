@@ -20,3 +20,5 @@ ENV PYTHONUNBUFFERED=1
 
 # Expone el puerto en el que se ejecutará la aplicación
 EXPOSE 5000
+
+CMD ["python", "run.py"]
