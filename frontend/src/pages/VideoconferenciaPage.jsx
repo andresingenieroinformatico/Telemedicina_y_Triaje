@@ -1,144 +1,279 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Alert, Button, FormGroup } from '../components/UIComponents';
+import React, { useState, useEffect, useRef } from 'react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { Alert, Button, FormGroup, Input, Spinner } from '../components/UIComponents';
+import { useAuth } from '../context/AuthContext';
+import VideoconferenciaService from '../services/videoconferencia.service';
+import AgendamientoService from '../services/agendamiento.service';
 
 const VideoconferenciaPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { user } = useAuth();
     const queryParams = new URLSearchParams(location.search);
     const citaId = queryParams.get('citaId');
 
-    const [isCameraOn, setIsCameraOn] = useState(false);
+    const [cita, setCita] = useState(null);
+    const [customRoomName, setCustomRoomName] = useState('');
+    const [jitsiLoaded, setJitsiLoaded] = useState(false);
+    const [jitsiAPI, setJitsiAPI] = useState(null);
     const [isInRoom, setIsInRoom] = useState(false);
-    const [isMuted, setIsMuted] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const containerRef = useRef(null);
 
-    const toggleCamera = () => setIsCameraOn(!isCameraOn);
-    const toggleMute = () => setIsMuted(!isMuted);
-    const handleJoin = () => setIsInRoom(true);
-    const handleEndCall = () => {
-        setIsInRoom(false);
-        setIsCameraOn(false);
+    // Cargar datos de la cita vinculada
+    useEffect(() => {
+        const cargarDatosCita = async () => {
+            if (!citaId) return;
+            try {
+                const data = await AgendamientoService.obtener(citaId);
+                setCita(data.data || data);
+            } catch (err) {
+                console.error("Error al obtener detalles de la cita:", err);
+            }
+        };
+        cargarDatosCita();
+    }, [citaId]);
+
+    // Cargar Jitsi Script dinámicamente
+    useEffect(() => {
+        const scriptId = 'jitsi-external-api';
+        if (window.JitsiMeetExternalAPI) {
+            setJitsiLoaded(true);
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.id = scriptId;
+        script.src = 'https://meet.jit.si/external_api.js';
+        script.async = true;
+        script.onload = () => setJitsiLoaded(true);
+        script.onerror = () => {
+            setError("Error al cargar la librería de videoconferencia. Verifica tu conexión a internet.");
+        };
+        document.body.appendChild(script);
+
+        return () => {
+            // Limpieza al desmontar
+            if (jitsiAPI) {
+                jitsiAPI.dispose();
+            }
+        };
+    }, [jitsiAPI]);
+
+    const handleJoin = async () => {
+        if (!jitsiLoaded) {
+            setError("Jitsi Meet aún se está cargando. Por favor, espera un momento.");
+            return;
+        }
+        setError('');
+
+        let roomName = '';
+        if (citaId) {
+            roomName = `consulta-cita-${citaId}`;
+        } else {
+            if (!customRoomName.trim()) {
+                setError("Por favor, ingresa un nombre o código de sala para unirte.");
+                return;
+            }
+            // Formatear el nombre de la sala para que sea seguro para Jitsi
+            roomName = customRoomName
+                .trim()
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '') // Quitar acentos
+                .replace(/[^a-z0-9]/g, '-'); // Reemplazar caracteres especiales por guiones
+        }
+
+        setLoading(true);
+
+        try {
+            const userRole = user?.rol || user?.role || 'paciente';
+            const displayName = user?.nombre || user?.username || 'Usuario';
+            const userId = user?.id || 1;
+
+            // Petición al backend para unirse/crear la sala y obtener la configuración
+            const response = await VideoconferenciaService.unirseSala(
+                roomName,
+                userId,
+                userRole,
+                citaId || 1, // sala_id fallback
+                displayName
+            );
+
+            if (response.success && response.data) {
+                const config = response.data.config_iframe;
+                
+                if (containerRef.current) {
+                    containerRef.current.innerHTML = ''; // Limpiar contenedor
+                    
+                    const options = {
+                        roomName: config.roomName,
+                        width: '100%',
+                        height: '100%',
+                        parentNode: containerRef.current,
+                        userInfo: {
+                            displayName: displayName
+                        },
+                        configOverwrite: config.configOverwrite,
+                        interfaceConfigOverwrite: config.interfaceConfigOverwrite
+                    };
+
+                    const api = new window.JitsiMeetExternalAPI(config.domain, options);
+                    
+                    // Escuchar evento de salida de llamada
+                    api.addEventListener('videoConferenceLeft', () => {
+                        setIsInRoom(false);
+                        api.dispose();
+                        setJitsiAPI(null);
+                    });
+
+                    setJitsiAPI(api);
+                    setIsInRoom(true);
+                }
+            } else {
+                setError("El servidor de videoconferencia devolvió un formato no válido.");
+            }
+        } catch (err) {
+            console.error("Error al iniciar videollamada:", err);
+            setError(err.error || err.message || "Error al conectar con el microservicio de videoconferencia.");
+        } finally {
+            setLoading(false);
+        }
     };
 
-    useEffect(() => {
-        if (!citaId) {
-            // Si intentan entrar sin una cita vinculada, redirigimos
-            navigate('/agendamientos');
+    const handleEndCall = () => {
+        if (jitsiAPI) {
+            jitsiAPI.dispose();
+            setJitsiAPI(null);
         }
-    }, [citaId, navigate]);
+        setIsInRoom(false);
+    };
 
     return (
         <main className="page-shell">
-            <section className="hero-card welcome-hero" aria-labelledby="video-title">
+            <section className="hero-card welcome-hero" style={{ marginBottom: '24px' }}>
                 <p className="eyebrow" style={{ color: '#175cd3' }}>Sala Virtual de Consulta</p>
                 <h1 id="video-title">Videoconferencia Médica</h1>
                 <p className="muted">
-                    {isInRoom ? "Consulta activa. El audio y video están encriptados." : "Inicia sesiones seguras de telemedicina para evaluación y seguimiento clínico en tiempo real."}
+                    {isInRoom ? "Consulta activa. Los flujos de audio y video están protegidos." : "Accede a tu teleconsulta médica integrada de forma segura o únete a una sala personalizada."}
                 </p>
             </section>
 
-            <section className="feature-grid">
-                <article className="feature-card" style={{ gridColumn: 'span 2' }}>
-                    <div style={{ 
-                        background: '#0f172a', 
-                        borderRadius: '16px', 
-                        height: '500px', 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        flexDirection: 'column',
-                        color: 'white',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        boxShadow: 'inset 0 0 100px rgba(0,0,0,0.5)'
-                    }}>
-                        {!isCameraOn ? (
-                            <div style={{ textAlign: 'center' }}>
-                                <div style={{ fontSize: '64px', marginBottom: '16px', opacity: 0.3 }}>📹</div>
-                                <h3 style={{ color: 'white', margin: '0 0 8px' }}>Cámara desactivada</h3>
-                                <p style={{ color: '#94a3b8' }}>Configura tus dispositivos antes de entrar</p>
-                            </div>
-                        ) : (
-                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <div style={{ textAlign: 'center' }}>
-                                    <div style={{ fontSize: '80px', filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.2))' }}>👤</div>
-                                    <p style={{ marginTop: '16px', fontWeight: '500' }}>Esperando al paciente...</p>
-                                </div>
-                                {/* Preview Local */}
-                                <div style={{ 
-                                    position: 'absolute', 
-                                    bottom: '20px', 
-                                    right: '20px', 
-                                    width: '160px', 
-                                    height: '100px', 
-                                    background: '#1e293b', 
-                                    borderRadius: '12px', 
-                                    border: '2px solid #334155',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    fontSize: '11px'
-                                }}>
-                                    Vista previa (Tú)
-                                </div>
+            {error && <Alert type="error" message={error} onClose={() => setError('')} />}
+
+            <section className="feature-grid" style={{ gridTemplateColumns: isInRoom ? '1fr' : 'repeat(3, 1fr)' }}>
+                <article className="feature-card" style={{ gridColumn: isInRoom ? '1 / -1' : 'span 2' }}>
+                    <div 
+                        id="jitsi-container" 
+                        ref={containerRef}
+                        style={{ 
+                            background: '#0f172a', 
+                            borderRadius: '16px', 
+                            height: '550px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            flexDirection: 'column',
+                            color: 'white',
+                            position: 'relative',
+                            overflow: 'hidden',
+                            boxShadow: 'inset 0 0 100px rgba(0,0,0,0.5)',
+                            border: '1px solid rgba(255,255,255,0.1)'
+                        }}
+                    >
+                        {!isInRoom && (
+                            <div style={{ textAlign: 'center', padding: '20px', width: '100%', maxWidth: '440px' }}>
+                                <div style={{ fontSize: '64px', marginBottom: '16px', animation: 'spin 4s linear infinite' }}>🌐</div>
+                                <h3 style={{ color: 'white', margin: '0 0 8px' }}>Sala de Videollamada</h3>
+                                
+                                {citaId ? (
+                                    <>
+                                        <p style={{ color: '#94a3b8', margin: '0 auto 24px' }}>
+                                            Conexión lista para la cita médica vinculada ID: <strong>{citaId}</strong>.
+                                        </p>
+                                        {loading ? (
+                                            <Spinner label="Cargando configuración de videoconferencia..." />
+                                        ) : (
+                                            <Button variant="primary" onClick={handleJoin} disabled={!jitsiLoaded}>
+                                                {jitsiLoaded ? 'Iniciar Consulta' : 'Cargando Módulos...'}
+                                            </Button>
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        <p style={{ color: '#94a3b8', margin: '0 auto 20px', fontSize: '0.92rem' }}>
+                                            Ingresa el nombre o código de la sala a la que deseas unirte (ej: consulta-privada).
+                                        </p>
+                                        <div style={{ marginBottom: '16px', textAlign: 'left' }}>
+                                            <Input
+                                                label="Código o Nombre de Sala"
+                                                type="text"
+                                                value={customRoomName}
+                                                onChange={(e) => setCustomRoomName(e.target.value)}
+                                                placeholder="Ejemplo: sala-de-consulta"
+                                                style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)' }}
+                                            />
+                                        </div>
+                                        {loading ? (
+                                            <Spinner label="Conectando..." />
+                                        ) : (
+                                            <Button variant="primary" onClick={handleJoin} disabled={!jitsiLoaded} style={{ width: '100%' }}>
+                                                {jitsiLoaded ? 'Unirse a la Sala' : 'Cargando Módulos...'}
+                                            </Button>
+                                        )}
+                                    </>
+                                )}
                             </div>
                         )}
-                        
-                        <div style={{ position: 'absolute', bottom: '30px', display: 'flex', gap: '12px', zIndex: 10 }}>
-                            {!isInRoom ? (
-                                <>
-                                    <Button variant="secondary" onClick={toggleCamera}>
-                                        {isCameraOn ? 'Desactivar Cámara' : 'Probar Cámara'}
-                                    </Button>
-                                    <Button variant="primary" onClick={handleJoin}>Iniciar Sesión</Button>
-                                </>
-                            ) : (
-                                <div style={{ 
-                                    background: 'rgba(30, 41, 59, 0.8)', 
-                                    padding: '8px 20px', 
-                                    borderRadius: '40px', 
-                                    display: 'flex', 
-                                    gap: '20px',
-                                    backdropFilter: 'blur(8px)',
-                                    border: '1px solid rgba(255,255,255,0.1)'
-                                }}>
-                                    <button onClick={toggleMute} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' }}>
-                                        {isMuted ? '🔇' : '🎤'}
-                                    </button>
-                                    <button onClick={toggleCamera} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' }}>
-                                        {isCameraOn ? '📹' : '🚫'}
-                                    </button>
-                                    <div style={{ width: '1px', background: 'rgba(255,255,255,0.2)', margin: '0 5px' }} />
-                                    <button onClick={handleEndCall} style={{ background: '#ef4444', border: 'none', color: 'white', padding: '8px 24px', borderRadius: '20px', fontWeight: 'bold', cursor: 'pointer' }}>
-                                        Terminar
-                                    </button>
-                                </div>
-                            )}
-                        </div>
                     </div>
                 </article>
 
-                <aside className="insight-panel">
-                    <h3>Panel de Control</h3>
-                    <FormGroup>
-                        {isInRoom ? (
-                            <Alert type="success" message="Consulta en progreso." />
-                        ) : (
-                            <Alert type="info" message="Verifica que el paciente esté conectado antes de iniciar la consulta virtual." />
-                        )}
-                        <div style={{ display: 'grid', gap: '12px', marginTop: '16px' }}>
-                            <Button variant="secondary" style={{ width: '100%' }}>Compartir Pantalla</Button>
-                            <Button variant="secondary" style={{ width: '100%' }}>Chat de Consulta</Button>
-                            <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '8px 0' }} />
-                            <div className="section-panel" style={{ padding: '12px', background: '#f8fafc' }}>
-                                <strong style={{ fontSize: '14px' }}>Detalles de la sesión</strong>
-                                <p className="muted" style={{ fontSize: '13px', margin: '4px 0' }}>Estado: {isInRoom ? 'Conectado' : 'Esperando'}</p>
-                                <p className="muted" style={{ fontSize: '13px', margin: '4px 0' }}>Encriptación: AES-256</p>
+                {!isInRoom && (
+                    <aside className="insight-panel">
+                        <h3>Acceso a Consultas</h3>
+                        <FormGroup>
+                            <Alert type="info" message="Puedes unirte directamente ingresando un código compartido por tu médico o paciente." />
+                            <div style={{ display: 'grid', gap: '12px', marginTop: '16px' }}>
+                                <div className="section-panel" style={{ padding: '16px', background: '#f8fafc', margin: 0 }}>
+                                    <strong style={{ fontSize: '14px', display: 'block', marginBottom: '8px' }}>Detalles de la Conexión</strong>
+                                    {citaId && cita ? (
+                                        <>
+                                            <p className="muted" style={{ fontSize: '13px', margin: '4px 0' }}><strong>Cita ID:</strong> {cita.id}</p>
+                                            <p className="muted" style={{ fontSize: '13px', margin: '4px 0' }}><strong>Fecha:</strong> {cita.fecha_cita}</p>
+                                            <p className="muted" style={{ fontSize: '13px', margin: '4px 0' }}><strong>Hora:</strong> {cita.hora_cita}</p>
+                                            <p className="muted" style={{ fontSize: '13px', margin: '4px 0' }}><strong>Médico:</strong> {cita.medico_nombre || `ID: ${cita.medico_id}`}</p>
+                                            <p className="muted" style={{ fontSize: '13px', margin: '4px 0' }}><strong>Paciente:</strong> {cita.paciente_nombre || `ID: ${cita.paciente_id}`}</p>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <p className="muted" style={{ fontSize: '13px', margin: '4px 0' }}><strong>Modo:</strong> Sala Libre / Manual</p>
+                                            <p className="muted" style={{ fontSize: '12px', marginTop: '10px', lineHeight: '1.4' }}>
+                                                Para iniciar una llamada vinculada a tu agenda, ve a la sección de <Link to="/agendamientos" style={{ color: 'var(--blue)', fontWeight: 'bold' }}>Agenda Médica</Link> y haz clic en "Videoconferencia" sobre la cita programada.
+                                            </p>
+                                        </>
+                                    )}
+                                </div>
+                                <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '8px 0' }} />
+                                <div className="section-panel" style={{ padding: '16px', background: '#f0fdf4', margin: 0, border: '1px solid #bbf7d0' }}>
+                                    <strong style={{ fontSize: '14px', display: 'block', color: '#166534', marginBottom: '4px' }}>🔒 Encriptación WebRTC</strong>
+                                    <p className="muted" style={{ fontSize: '12px', margin: 0, color: '#166534', lineHeight: '1.4' }}>
+                                        La videoconferencia se ejecuta de forma segura punto a punto. Recuerda habilitar los permisos del micrófono y la cámara en el navegador.
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                    </FormGroup>
-                </aside>
+                        </FormGroup>
+                    </aside>
+                )}
             </section>
+
+            {isInRoom && (
+                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+                    <Button variant="danger" onClick={handleEndCall}>
+                        Finalizar y Salir de la Consulta
+                    </Button>
+                </div>
+            )}
         </main>
     );
 };

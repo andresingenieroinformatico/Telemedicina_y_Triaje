@@ -27,3 +27,30 @@ def get_connection():
             user=os.getenv("DB_USER"),
             password=os.getenv("DB_PASSWORD")
         )
+
+def init_db():
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS evaluacion_triage (
+                id_evaluacion SERIAL PRIMARY KEY,
+                id_paciente INTEGER NOT NULL,
+                nivel INTEGER NOT NULL,
+                sintomas_reportados TEXT,
+                temperatura NUMERIC(4,2),
+                frecuencia_cardiaca INTEGER,
+                fecha_evaluacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
+        conn.commit()
+        print("Base de datos de Triage inicializada correctamente.")
+    except Exception as e:
+        print("Error al inicializar la base de datos de triage:", e)
+        if 'conn' in locals() and conn:
+            conn.rollback()
+    finally:
+        if 'cur' in locals() and cur:
+            cur.close()
+        if 'conn' in locals() and conn:
+            conn.close()

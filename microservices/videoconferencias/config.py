@@ -1,10 +1,7 @@
 import os
 from dotenv import load_dotenv, find_dotenv
-from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv(find_dotenv())
-
-db = SQLAlchemy()
 
 def get_db_url():
     db_url = os.getenv("VIDEOCONFERENCIAS_DB_URL") or os.getenv("DATABASE_URL")
