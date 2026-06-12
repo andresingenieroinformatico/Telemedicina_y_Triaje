@@ -17,7 +17,7 @@ const patientModules = [
     { title: 'Agendamiento', description: 'Reserva citas médicas o consulta tus pendientes.', path: '/agendamientos' },
     { title: 'Triaje Médico', description: 'Realiza tu autoevaluación de salud antes de la cita.', path: '/triage' },
     { title: 'Historial Médico', description: 'Consulta antecedentes, signos vitales y evolución.', path: '/historial-medico' },
-    { title: 'Videoconferencia', description: 'Accede a tu consulta médica virtual.', path: '/videoconferencia' },
+    { title: 'Videoconferencia', description: 'Accede a tu consulta médica virtual.', path: '/videoconferencia' }
 ];
 
 const doctorModules = [
@@ -221,7 +221,7 @@ function MainApp() {
                     <Route
                         path="/triage"
                         element={
-                            <ProtectedRoute allowedRoles={['paciente', 'medico']}>
+                            <ProtectedRoute allowedRoles={['medico']}>
                                 <TriagePage />
                             </ProtectedRoute>
                         }

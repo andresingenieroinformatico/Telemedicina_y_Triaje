@@ -36,12 +36,12 @@ video_bp = Blueprint("video", __name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # HELPERS
 # ─────────────────────────────────────────────────────────────────────────────
-
 def _ok(data, status=200):
     return jsonify({"success": True, "data": data}), status
 
 def _err(msg, status=400):
     return jsonify({"success": False, "error": msg}), status
+
 
 def _safe_commit():
     """
@@ -98,10 +98,12 @@ def crear_sala():
     Crea una nueva sala de videoconferencia con integración Jitsi Meet.
     Body JSON requerido: nombre
     Body JSON opcional:  descripcion, capacidad_max, url_sala (si se omite, se auto-genera desde Jitsi)
+    Body JSON opcional:  descripcion, capacidad_max, url_sala (si se omite, se auto-genera desde Jitsi)
     """
     data = request.get_json()
     if not data:
         return _err("Se requiere cuerpo JSON.", 400)
+
 
     if not data.get("nombre"):
         return _err("El campo 'nombre' es obligatorio.", 400)
@@ -275,10 +277,13 @@ def iniciar_sesion():
     Reglas:
       - La sala debe existir y estar activa.
       - No puede haber ya una sesión activa en esa sala.
+      - La sala debe existir y estar activa.
+      - No puede haber ya una sesión activa en esa sala.
     """
     data = request.get_json()
     if not data:
         return _err("Se requiere cuerpo JSON.", 400)
+
 
     sala_id = data.get("sala_id")
     if not sala_id:
@@ -400,10 +405,12 @@ def unirse_sesion(sesion_id):
     usuario_id = data.get("usuario_id")
     rol        = data.get("rol")
 
+
     if not usuario_id:
         return _err("El campo 'usuario_id' es obligatorio.", 400)
     if not rol or rol not in {"medico", "paciente", "admin"}:
         return _err("El campo 'rol' es obligatorio y debe ser: medico | paciente | admin.", 400)
+
 
     # Verificar si ya está activo en la sesión
     ya_presente = Participante.query.filter_by(
@@ -646,3 +653,4 @@ def actualizar_grabacion_sesion(sesion_id):
         return err
 
     return _ok(sesion.to_dict(include_participantes=False))
+

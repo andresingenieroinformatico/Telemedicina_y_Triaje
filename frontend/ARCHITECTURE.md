@@ -92,7 +92,7 @@ import { API_BASE_URLS } from './api.config';
 class NuevaFuncionalidadService {
     constructor() {
         this.client = axios.create({
-            baseURL: API_BASE_URLS.AGENDAMIENTO,
+            baseURL: `${process.env.REACT_APP_API_URL}/agendamiento`,
             withCredentials: true,
             headers: { 'Content-Type': 'application/json' },
         });

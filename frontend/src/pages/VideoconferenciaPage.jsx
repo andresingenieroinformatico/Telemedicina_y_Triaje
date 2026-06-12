@@ -122,6 +122,7 @@ const VideoconferenciaPage = () => {
             <section className="feature-grid" style={{ gridTemplateColumns: isInRoom ? '1fr' : 'repeat(3, 1fr)' }}>
                 <article className="feature-card" style={{ gridColumn: isInRoom ? '1 / -1' : 'span 2' }}>
                     <div 
+                    <div
                         style={{ 
                             background: '#0f172a', 
                             borderRadius: '16px', 
