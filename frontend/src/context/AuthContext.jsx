@@ -50,7 +50,11 @@ export const AuthProvider = ({ children }) => {
 
         if (token) {
             setAuthToken(token, storedRole);
-            setUser({ username: localStorage.getItem('user_name') || 'Usuario', role: storedRole });
+            setUser({
+                username: localStorage.getItem('user_name') || 'Usuario',
+                role: storedRole,
+                rol: storedRole,   // alias en español usado por App.jsx y páginas
+            });
         }
 
         setLoading(false);
@@ -65,10 +69,12 @@ export const AuthProvider = ({ children }) => {
 
             if (response.access_token) {
                 setAuthToken(response.access_token, userRole);
+                const userInfo = response.user_info || {};
                 setUser({
                     username,
                     role: userRole,
-                    ...response.user_info,
+                    rol: userInfo.rol || userInfo.role || userRole,  // alias en español
+                    ...userInfo,
                 });
                 localStorage.setItem('user_name', username);
             }
@@ -77,10 +83,10 @@ export const AuthProvider = ({ children }) => {
         } catch (err) {
             const userRole = role || 'paciente';
             setAuthToken('demo-token-' + userRole, userRole);
-            setUser({ username, role: userRole, demoMode: true });
+            setUser({ username, role: userRole, rol: userRole, demoMode: true });
             localStorage.setItem('user_name', username);
             setError('Modo demo habilitado para continuar con la plataforma.');
-            return { access_token: 'demo-token-' + userRole, user_info: { role: userRole } };
+            return { access_token: 'demo-token-' + userRole, user_info: { role: userRole, rol: userRole } };
         } finally {
             setLoading(false);
         }

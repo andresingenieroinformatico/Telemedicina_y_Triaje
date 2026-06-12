@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import HistorialMedicoService from '../services/historial-medico.service';
-import { Alert, FormGroup, Spinner, Table, Button } from '../components/UIComponents';
+import { Alert, Spinner, Table } from '../components/UIComponents';
 import { useAuth } from '../context/AuthContext';
 
 const HistorialMedicoPage = () => {
@@ -15,6 +15,7 @@ const HistorialMedicoPage = () => {
 
     const isMedico = user?.rol?.toLowerCase() === 'medico' || user?.role?.toLowerCase() === 'medico';
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         cargarPacientes();
     }, [user]);

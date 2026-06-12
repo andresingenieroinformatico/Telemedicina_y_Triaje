@@ -195,7 +195,8 @@ const TriagePage = () => {
         } finally {
             setLoading(false);
         }
-    }, [pacienteId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pacienteId, cargarHistorial]);
 
     useEffect(() => {
         if (modo === 'historial') {
@@ -467,13 +468,8 @@ const getNivelColor = (nivel) => {
         '3': '#ca8a04',
         '4': '#0284c7',
         '5': '#16803c',
-        1: '#c24135',
-        2: '#ea580c',
-        3: '#ca8a04',
-        4: '#0284c7',
-        5: '#16803c'
     };
-    return colores[nivel] || '#0b1220';
+    return colores[String(nivel)] || '#0b1220';
 };
 
 export default TriagePage;
