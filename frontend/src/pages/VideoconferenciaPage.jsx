@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { Alert, Button, FormGroup, Input, Spinner } from '../components/UIComponents';
 import { useAuth } from '../context/AuthContext';
 import VideoconferenciaService from '../services/videoconferencia.service';
@@ -7,7 +7,6 @@ import AgendamientoService from '../services/agendamiento.service';
 
 const VideoconferenciaPage = () => {
     const location = useLocation();
-    const navigate = useNavigate();
     const { user } = useAuth();
     const queryParams = new URLSearchParams(location.search);
     const citaId = queryParams.get('citaId');
@@ -81,8 +80,6 @@ const VideoconferenciaPage = () => {
             );
 
             if (response.success && response.data) {
-                const config = response.data.config_iframe;
-                
                 if (containerRef.current) {
                     // Abrir la sala directamente en una nueva pestaña (bypass al límite de 5 minutos)
                     window.open(response.data.url_acceso, '_blank', 'noopener,noreferrer');
