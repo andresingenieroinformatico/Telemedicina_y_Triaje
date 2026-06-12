@@ -13,6 +13,7 @@ def create_app():
     CORS(app, supports_credentials=True)
 
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key")
+    app.config.from_object(Config)
 
     db.init_app(app)
     Migrate(app, db)  # Habilita: flask db init / migrate / upgrade
