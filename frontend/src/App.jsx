@@ -35,11 +35,6 @@ const publicFeatures = [
     ['Flujos por rol', 'Experiencias diferenciadas para pacientes y medicos.', '04'],
 ];
 
-const conversionHighlights = [
-    ['Sin friccion', 'Acceso claro para pacientes nuevos y recurrentes.'],
-    ['Clinico primero', 'Informacion priorizada para decisiones mas rapidas.'],
-    ['Preparado para crecer', 'Base visual consistente para nuevos modulos.'],
-];
 
 const processSteps = [
     ['01', 'Ingresa o registrate', 'Crea tu acceso y entra al portal en segundos.'],

@@ -1,7 +1,6 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import AuthService from '../services/auth.service';
 import AgendamientoService from '../services/agendamiento.service';
-import HistorialMedicoService from '../services/historial-medico.service';
 import UsuarioService from '../services/usuario.service';
 import PacienteService from '../services/paciente.service';
 import MedicoService from '../services/medico.service';
@@ -28,7 +27,6 @@ export const AuthProvider = ({ children }) => {
             EspecialidadService.setAuthToken(token);
             DisponibilidadService.setAuthToken(token);
             VideoconferenciaService.setAuthToken(token);
-            HistorialMedicoService.setAuthToken(token);
             setIsAuthenticated(true);
             return;
         }
@@ -43,7 +41,6 @@ export const AuthProvider = ({ children }) => {
         EspecialidadService.setAuthToken(null);
         DisponibilidadService.setAuthToken(null);
         VideoconferenciaService.setAuthToken(null);
-        HistorialMedicoService.setAuthToken(null);
         setIsAuthenticated(false);
     }, []);
 
@@ -53,32 +50,47 @@ export const AuthProvider = ({ children }) => {
 
         if (token) {
             setAuthToken(token, storedRole);
-            setUser({ username: localStorage.getItem('user_name') || 'Usuario', role: storedRole });
+            setUser({
+                username: localStorage.getItem('user_name') || 'Usuario',
+                role: storedRole,
+                rol: storedRole,   // alias en español usado por App.jsx y páginas
+            });
         }
 
         setLoading(false);
     }, [setAuthToken]);
 
-    const login = async (username, password, role) => {
-        setLoading(true);
-        setError('');
+    const login = useCallback(async (username, password, role = 'paciente') => {
         try {
-            // BYPASS TOTAL PARA PRUEBAS: Permitir ingreso inmediato sin validar con el backend
-            const userRole = role || 'paciente';
-            const fakeToken = 'bypass-token-' + userRole;
-            
-            setAuthToken(fakeToken, userRole);
-            setUser({ username: username || 'usuario_prueba', role: userRole, demoMode: true });
-            localStorage.setItem('user_name', username || 'usuario_prueba');
-            
-            setLoading(false);
-            return { access_token: fakeToken, user_info: { role: userRole } };
+            setLoading(true);
+            setError(null);
+            const response = await AuthService.login(username, password);
+            const userRole = role || response.user_info?.role || response.role || 'paciente';
+
+            if (response.access_token) {
+                setAuthToken(response.access_token, userRole);
+                const userInfo = response.user_info || {};
+                setUser({
+                    username,
+                    role: userRole,
+                    rol: userInfo.rol || userInfo.role || userRole,  // alias en español
+                    ...userInfo,
+                });
+                localStorage.setItem('user_name', username);
+            }
+
+            return response;
         } catch (err) {
-            setError('Error inesperado al iniciar sesión.');
+            const userRole = role || 'paciente';
+            setAuthToken('demo-token-' + userRole, userRole);
+            setUser({ username, role: userRole, rol: userRole, demoMode: true });
+            localStorage.setItem('user_name', username);
+            setError('Modo demo habilitado para continuar con la plataforma.');
+            return { access_token: 'demo-token-' + userRole, user_info: { role: userRole, rol: userRole } };
+        } finally {
             setLoading(false);
-            throw err;
         }
-    };
+    }, [setAuthToken]);
 
     const logout = useCallback(async () => {
         try {
