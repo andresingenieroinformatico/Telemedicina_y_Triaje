@@ -87,11 +87,15 @@ services:
       - USUARIOS_SERVICE_URL=http://usuarios-service:5002
       - AGENDAMIENTO_SERVICE_URL=http://agendamiento-service:5000
       - TRIAGE_SERVICE_URL=http://triage-service:5001
+      - HISTORIAL_SERVICE_URL=http://historial-service:5003
+      - VIDEOCONFERENCIAS_SERVICE_URL=http://videoconferencias-service:5004
       - JWT_SECRET=super-secret-key
     depends_on:
       - usuarios-service
       - agendamiento-service
       - triage-service
+      - historial-service
+      - videoconferencias-service
 
 volumes:
   postgres_data:

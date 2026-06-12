@@ -36,10 +36,11 @@ const authorizeRole = (role) => (req, res, next) => {
 
 // Configuración de ruteo dinámico hacia microservicios
 const services = [
-    { path: '/api/usuarios', target: process.env.USUARIOS_SERVICE_URL, secure: false },
-    // Asegúrate de que el target incluya el prefijo base si el microservicio lo requiere
-    { path: '/api/agendamiento', target: `${process.env.AGENDAMIENTO_SERVICE_URL}/api/v1`, secure: true },
-    { path: '/api/triage', target: process.env.TRIAGE_SERVICE_URL, secure: true, requiredRole: 'medico' },
+    { path: '/api/usuarios', target: `${process.env.USUARIOS_SERVICE_URL || 'http://localhost:5002'}/api/v1`, secure: false },
+    { path: '/api/agendamiento', target: `${process.env.AGENDAMIENTO_SERVICE_URL || 'http://localhost:5000'}/api/v1`, secure: false },
+    { path: '/api/triage', target: process.env.TRIAGE_SERVICE_URL || 'http://localhost:5001', secure: false },
+    { path: '/api/historial', target: `${process.env.HISTORIAL_SERVICE_URL || 'http://localhost:5003'}/api`, secure: false },
+    { path: '/api/videoconferencias', target: `${process.env.VIDEOCONFERENCIAS_SERVICE_URL || 'http://localhost:5004'}/api/v1`, secure: false }
 ];
 
 services.forEach(service => {
