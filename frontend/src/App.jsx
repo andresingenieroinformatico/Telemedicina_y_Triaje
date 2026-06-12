@@ -14,15 +14,8 @@ import './App.css';
 setupAxiosInterceptors();
 
 const patientModules = [
-<<<<<<< HEAD
     { title: 'Agendamientos', description: 'Reserva, consulta y administra tus citas medicas.', path: '/agendamientos' },
     { title: 'Historial medico', description: 'Consulta antecedentes, signos vitales y evolucion.', path: '/historial-medico' },
-=======
-    { title: 'Agendamiento', description: 'Reserva citas médicas o consulta tus pendientes.', path: '/agendamientos' },
-    { title: 'Triaje Médico', description: 'Realiza tu autoevaluación de salud antes de la cita.', path: '/triage' },
-    { title: 'Historial Médico', description: 'Consulta antecedentes, signos vitales y evolución.', path: '/historial-medico' },
-    { title: 'Videoconferencia', description: 'Accede a tu consulta médica virtual.', path: '/videoconferencia' },
->>>>>>> d9980eb2c29e366c386e8fa7c94f0d4edf58660d
 ];
 
 const doctorModules = [
