@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import AuthService from '../services/auth.service';
 import AgendamientoService from '../services/agendamiento.service';
+import HistorialMedicoService from '../services/historial-medico.service';
 import UsuarioService from '../services/usuario.service';
 import PacienteService from '../services/paciente.service';
 import MedicoService from '../services/medico.service';
@@ -27,6 +28,7 @@ export const AuthProvider = ({ children }) => {
             EspecialidadService.setAuthToken(token);
             DisponibilidadService.setAuthToken(token);
             VideoconferenciaService.setAuthToken(token);
+            HistorialMedicoService.setAuthToken(token);
             setIsAuthenticated(true);
             return;
         }
@@ -41,6 +43,7 @@ export const AuthProvider = ({ children }) => {
         EspecialidadService.setAuthToken(null);
         DisponibilidadService.setAuthToken(null);
         VideoconferenciaService.setAuthToken(null);
+        HistorialMedicoService.setAuthToken(null);
         setIsAuthenticated(false);
     }, []);
 
@@ -75,12 +78,17 @@ export const AuthProvider = ({ children }) => {
 
             return response;
         } catch (err) {
-            const userRole = role || 'paciente';
-            setAuthToken('demo-token-' + userRole, userRole);
-            setUser({ username, role: userRole, demoMode: true });
-            localStorage.setItem('user_name', username);
-            setError('Modo demo habilitado para continuar con la plataforma.');
-            return { access_token: 'demo-token-' + userRole, user_info: { role: userRole } };
+            if (process.env.REACT_APP_DEMO_MODE === 'true') {
+                const userRole = role || 'paciente';
+                setAuthToken('demo-token-' + userRole, userRole);
+                setUser({ username, role: userRole, demoMode: true });
+                localStorage.setItem('user_name', username);
+                setError('Modo demo habilitado para continuar con la plataforma.');
+                return { access_token: 'demo-token-' + userRole, user_info: { role: userRole } };
+            }
+            const errorMsg = err?.response?.data?.message || err?.message || 'Credenciales inválidas o servidor no disponible.';
+            setError(errorMsg);
+            throw err;
         } finally {
             setLoading(false);
         }

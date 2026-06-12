@@ -23,7 +23,7 @@ const PacientesPage = () => {
     }, []);
 
     const cargarPacientes = async () => {
-        if (user?.rol?.toLowerCase() !== 'medico') {
+        if (user?.role?.toLowerCase() !== 'medico') {
             setError('Acceso restringido: Solo el personal médico puede ver esta lista.');
             return;
         }

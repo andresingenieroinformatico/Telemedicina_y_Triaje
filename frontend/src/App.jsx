@@ -127,7 +127,7 @@ function PublicLanding() {
 
 function HomePage() {
     const { isAuthenticated, user } = useAuth();
-    const modules = user?.rol?.toLowerCase() === 'medico' ? doctorModules : patientModules;
+    const modules = user?.role?.toLowerCase() === 'medico' ? doctorModules : patientModules;
 
     if (isAuthenticated) {
         return (
@@ -135,7 +135,7 @@ function HomePage() {
                 <section className="hero-card welcome-hero" aria-labelledby="welcome-title">
                     <p className="eyebrow" style={{ color: '#175cd3' }}>Centro operativo</p>
                     <h1 id="welcome-title">
-                        Hola, {user?.nombre || user?.username || 'usuario'}. {user?.rol?.toLowerCase() === 'medico' ? 'Tu panel médico está listo.' : 'Tu portal de salud está listo.'}
+                        Hola, {user?.nombre || user?.username || 'usuario'}. {user?.role?.toLowerCase() === 'medico' ? 'Tu panel médico está listo.' : 'Tu portal de salud está listo.'}
                     </h1>
                     <p className="muted">
                         Continua con citas, triage y seguimiento clinico desde una interfaz clara, rapida y confiable.
@@ -162,7 +162,7 @@ function HomePage() {
 function Navigation() {
     const { isAuthenticated, user, logout } = useAuth();
     const navigate = useNavigate();
-    const modules = user?.rol?.toLowerCase() === 'medico' ? doctorModules : patientModules;
+    const modules = user?.role?.toLowerCase() === 'medico' ? doctorModules : patientModules;
 
     const handleLogout = async () => {
         await logout();
@@ -243,7 +243,7 @@ function MainApp() {
                     <Route
                         path="/videoconferencia"
                         element={
-                            <ProtectedRoute allowedRoles={['paciente', 'medico']}>
+                            <ProtectedRoute allowedRoles={['medico']}>
                                 <VideoconferenciaPage />
                             </ProtectedRoute>
                         }

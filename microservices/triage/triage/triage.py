@@ -60,7 +60,7 @@ def calcular_nivel_triage(sintomas, signos_vitales):
     if any(p in sintomas_texto for p in criticos_n2) or ritmo_cardiaco > 120 or temperatura > 39.5 or saturacion_oxigeno < 90:
         return 2
 
-    medios_n3 = ['fractura', 'deshidratacion', 'abdomoninal', 'vomito', 'dolor agudo']
+    medios_n3 = ['fractura', 'deshidratacion', 'abdominal', 'vomito', 'dolor agudo']
     if any(p in sintomas_texto for p in medios_n3) or temperatura > 38.5 or ritmo_cardiaco > 100:
         return 3
 
