@@ -106,7 +106,7 @@ const LoginPage = () => {
                         <form onSubmit={handleSubmit}>
                             <div className="role-selector" aria-label="Seleccionar tipo de acceso">
                                 {[
-                                    ['paciente', 'Paciente', 'Agenda, triage e historial personal.'],
+                                    ['paciente', 'Paciente', 'Agenda e historial personal.'],
                                     ['medico', 'Medico', 'Pacientes, agenda y gestion clinica.'],
                                 ].map(([value, label, description]) => (
                                     <button

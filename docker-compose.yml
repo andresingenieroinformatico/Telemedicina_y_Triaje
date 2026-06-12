@@ -13,7 +13,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
 
   # Microservicio de Usuarios y Autenticación
   usuarios-service:
@@ -50,28 +49,22 @@ services:
     depends_on:
       - db
 
-  # Microservicio de Videoconferencias
-  videoconferencias-service:
-    build: ./microservices/videoconferencias
-    container_name: videoconferencias_ms
+  # API Gateway (Punto de entrada único para el Frontend)
+  gateway:
+    build: .
+    container_name: api_gateway
     restart: always
     ports:
-      - "5004:5004"
-    depends_on:
-      - db
-
-  # Microservicio de Historial Médico
-  historial-service:
-    build: ./microservices/historial_medico
-    container_name: historial_ms
-    restart: always
-    ports:
-      - "5003:5003"
+      - "8080:8080"
     environment:
-      - DATABASE_URL=postgresql://admin:admin123@db:5432/historial_medico
+      - USUARIOS_SERVICE_URL=http://usuarios-service:5002
+      - AGENDAMIENTO_SERVICE_URL=http://agendamiento-service:5000
+      - TRIAGE_SERVICE_URL=http://triage-service:5001
+      - JWT_SECRET=super-secret-key
     depends_on:
-      - db
-
+      - usuarios-service
+      - agendamiento-service
+      - triage-service
 
 volumes:
   postgres_data:

@@ -19,8 +19,6 @@ cp .env.example .env.local
 REACT_APP_AGENDAMIENTO_URL=http://localhost:5000
 REACT_APP_TRIAGE_URL=http://localhost:5001
 REACT_APP_USUARIOS_URL=http://localhost:5002
-REACT_APP_HISTORIAL_MEDICO_URL=http://localhost:5003
-REACT_APP_VIDEOCONFERENCIA_URL=http://localhost:5004
 ```
 
 ## Ejecutar el proyecto
