@@ -6,6 +6,7 @@ import PacienteService from '../services/paciente.service';
 import MedicoService from '../services/medico.service';
 import EspecialidadService from '../services/especialidad.service';
 import DisponibilidadService from '../services/disponibilidad.service';
+import VideoconferenciaService from '../services/videoconferencia.service';
 
 export const AuthContext = createContext();
 
@@ -25,6 +26,7 @@ export const AuthProvider = ({ children }) => {
             MedicoService.setAuthToken(token);
             EspecialidadService.setAuthToken(token);
             DisponibilidadService.setAuthToken(token);
+            VideoconferenciaService.setAuthToken(token);
             setIsAuthenticated(true);
             return;
         }
@@ -38,6 +40,7 @@ export const AuthProvider = ({ children }) => {
         MedicoService.setAuthToken(null);
         EspecialidadService.setAuthToken(null);
         DisponibilidadService.setAuthToken(null);
+        VideoconferenciaService.setAuthToken(null);
         setIsAuthenticated(false);
     }, []);
 

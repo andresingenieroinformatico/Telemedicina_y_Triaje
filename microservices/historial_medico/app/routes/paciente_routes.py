@@ -6,7 +6,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 
-from microservices.videoconferencias.app import db
+from app import db
 from app.models   import Paciente, HistorialMedico
 from app.schemas  import PacienteSchema, PacienteCreateSchema, PacienteUpdateSchema
 
@@ -183,3 +183,35 @@ def eliminar_paciente(paciente_id):
     paciente.activo = False
     db.session.commit()
     return jsonify({"mensaje": f"Paciente {paciente_id} desactivado correctamente"}), 200
+
+# ── GET /api/pacientes/<id>/resumen ────────────────────────
+@paciente_bp.get("/<int:paciente_id>/resumen")
+@jwt_required()
+def resumen_paciente(paciente_id):
+    """
+    Resumen completo del paciente por paciente_id: historial + últimas consultas + últimos signos vitales.
+    """
+    from app.models.historial import HistorialMedico
+    from app.schemas import HistorialSchema, ConsultaSchema, SignosVitalesSchema
+    
+    paciente = Paciente.query.get_or_404(paciente_id, description="Paciente no encontrado")
+    historial = HistorialMedico.query.filter_by(paciente_id=paciente_id).first()
+    
+    # Crear historial médico vacío si no tiene uno por consistencia
+    if not historial:
+        historial = HistorialMedico(paciente_id=paciente_id)
+        db.session.add(historial)
+        db.session.commit()
+        
+    ultimas_consultas = historial.consultas.order_by(
+        db.text("fecha_consulta DESC")
+    ).limit(5).all()
+    
+    ultimos_signos = historial.signos.limit(5).all()
+    
+    return jsonify({
+        "paciente": _schema.dump(paciente),
+        "historial": HistorialSchema().dump(historial),
+        "ultimas_consultas": ConsultaSchema(many=True).dump(ultimas_consultas),
+        "ultimos_signos": SignosVitalesSchema(many=True).dump(ultimos_signos),
+    }), 200

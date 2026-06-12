@@ -7,6 +7,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-EXPOSE 5000
+EXPOSE 5004
 
-CMD ["python", "app.py"]
+CMD ["sh", "-c", "gunicorn -b 0.0.0.0:${PORT:-5004} 'app:create_app()'"]

@@ -9,7 +9,7 @@ from typing import Optional
 
 from sqlalchemy import and_, or_
 
-from microservices.videoconferencias.app import db
+from app import db
 from app.models import (
     Agendamiento, HistorialAgendamiento,
     Medico, Paciente, DisponibilidadMedico
@@ -129,7 +129,10 @@ def crear_agendamiento(data: dict) -> tuple:
         return None, "Paciente no encontrado o inactivo."
 
     fecha_cita: date = data["fecha_cita"]
-    hora_inicio: time = data["hora_inicio"]
+    # Soporte para 'hora_inicio' (backend) o 'hora_cita' (frontend)
+    hora_inicio: time = data.get("hora_inicio") or data.get("hora_cita")
+    if not hora_inicio:
+        return None, "La hora de la cita es requerida."
 
     # Calcular hora fin según duración de consulta del médico
     inicio_dt = datetime.combine(fecha_cita, hora_inicio)
@@ -169,7 +172,7 @@ def crear_agendamiento(data: dict) -> tuple:
         hora_fin=hora_fin,
         tipo_consulta=data.get("tipo_consulta", "PRIMERA_VEZ"),
         modalidad=data.get("modalidad", "VIDEOCONSULTA"),
-        motivo_consulta=data.get("motivo_consulta"),
+        motivo_consulta=data.get("motivo_consulta") or data.get("motivo"),
         notas_adicionales=data.get("notas_adicionales"),
         nivel_triaje=data.get("nivel_triaje"),
         puntaje_triaje=data.get("puntaje_triaje"),

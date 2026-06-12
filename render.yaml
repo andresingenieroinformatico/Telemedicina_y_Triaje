@@ -1,0 +1,78 @@
+# ==============================================================================
+# Blueprint de Render (Infrastructure as Code)
+# Este archivo despliega 5 microservicios y 1 base de datos en la capa gratuita
+# ==============================================================================
+
+databases:
+  - name: telemedicina-db-global
+    databaseName: telemedicina_db
+    user: admin_telemedicina
+    plan: free
+
+services:
+  # 1. Microservicio de Agendamiento
+  - type: web
+    name: api-agendamiento
+    env: docker
+    plan: free
+    rootDir: microservices/agendamiento
+    dockerfilePath: dockerfile
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: telemedicina-db-global
+          property: connectionString
+
+  # 2. Microservicio de Historial Médico
+  - type: web
+    name: api-historial-medico
+    env: docker
+    plan: free
+    rootDir: microservices/historial_medico
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: telemedicina-db-global
+          property: connectionString
+
+  # 3. Microservicio de Triage
+  - type: web
+    name: api-triage
+    env: docker
+    plan: free
+    rootDir: microservices/triage
+    dockerfilePath: dockerfile
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: telemedicina-db-global
+          property: connectionString
+
+  # 4. Microservicio de Usuarios
+  - type: web
+    name: api-usuarios
+    env: docker
+    plan: free
+    rootDir: microservices/usuarios/servicio_usuarios
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: telemedicina-db-global
+          property: connectionString
+
+  # 5. Microservicio de Videoconferencias
+  - type: web
+    name: api-videoconferencias
+    env: docker
+    plan: free
+    rootDir: microservices/videoconferencias
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: JITSI_SERVER_URL
+        value: https://meet.jit.si
+      - key: DATABASE_URL
+        fromDatabase:
+          name: telemedicina-db-global
+          property: connectionString

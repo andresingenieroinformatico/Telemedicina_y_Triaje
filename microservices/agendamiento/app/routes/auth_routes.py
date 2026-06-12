@@ -10,8 +10,7 @@ from flask_jwt_extended import (
 )
 from flask_jwt_extended import set_access_cookies, unset_jwt_cookies
 from marshmallow import Schema, fields, ValidationError, validate
-
-from microservices.videoconferencias.app import db
+from app import db
 from app.models import Usuario, Paciente
 from app.utils import success_response, error_response
 
@@ -42,8 +41,8 @@ def login():
     Autentica un usuario y retorna token JWT.
     
     Body JSON:
-      - username (requerido)
-      - password (requerido)
+    - username (requerido)
+    - password (requerido)
     """
     json_data = request.get_json()
     if not json_data:
@@ -63,7 +62,7 @@ def login():
         identity=str(usuario.id),
         additional_claims={
             "username": usuario.username,
-            "rol": usuario.rol,
+            "role": usuario.rol,
             "email": usuario.email,
         }
     )
@@ -75,7 +74,7 @@ def login():
                 "id": usuario.id,
                 "username": usuario.username,
                 "email": usuario.email,
-                "rol": usuario.rol,
+                "role": usuario.rol,
             }
         },
         message="Autenticación exitosa.",
@@ -104,13 +103,13 @@ def login_cookie():
 
     access_token = create_access_token(identity=str(usuario.id), additional_claims={
         "username": usuario.username,
-        "rol": usuario.rol,
+        "role": usuario.rol,
         "email": usuario.email,
     })
 
     # Construir respuesta y setear cookie
     resp, code = success_response(
-        data={"usuario": {"id": usuario.id, "username": usuario.username, "email": usuario.email, "rol": usuario.rol}},
+        data={"usuario": {"id": usuario.id, "username": usuario.username, "email": usuario.email, "role": usuario.rol}},
         message="Autenticación exitosa.",
         status_code=200,
     )
@@ -132,10 +131,10 @@ def register():
     Registra un nuevo usuario (solo para PACIENTES).
     
     Body JSON:
-      - username (requerido)
-      - email (requerido)
-      - password (requerido, mín 8 caracteres)
-      - paciente_id (opcional, para vincular con paciente existente)
+    - username (requerido)
+    - email (requerido)
+    - password (requerido, mín 8 caracteres)
+    - paciente_id (opcional, para vincular con paciente existente)
     """
     json_data = request.get_json()
     if not json_data:
@@ -172,7 +171,7 @@ def register():
             "id": usuario.id,
             "username": usuario.username,
             "email": usuario.email,
-            "rol": usuario.rol,
+            "role": usuario.rol,
         },
         message="Usuario registrado exitosamente.",
         status_code=201
@@ -204,7 +203,7 @@ def me():
             "id": usuario.id,
             "username": usuario.username,
             "email": usuario.email,
-            "rol": usuario.rol,
+            "role": usuario.rol,
             "activo": usuario.activo,
         }
     )

@@ -1,11 +1,19 @@
 import os
 from datetime import timedelta
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
-load_dotenv()
+load_dotenv(find_dotenv())
 
 basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 
+def get_db_url():
+    db_url = os.getenv("AGENDAMIENTO_DB_URL") or os.getenv("DATABASE_URL")
+    if db_url:
+        if db_url.startswith("postgres://"):
+            db_url = db_url.replace("postgres://", "postgresql+pg8000://", 1)
+        elif db_url.startswith("postgresql://") and not db_url.startswith("postgresql+pg8000://"):
+            db_url = db_url.replace("postgresql://", "postgresql+pg8000://", 1)
+    return db_url
 
 class Config:
     """Configuración base."""
@@ -28,17 +36,14 @@ class Config:
 class DevelopmentConfig(Config):
     """Configuración de desarrollo."""
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URL",
-        f"sqlite:///{os.path.join(basedir, 'telemedicina.db')}"
-    )
+    SQLALCHEMY_DATABASE_URI = get_db_url()
     SQLALCHEMY_ECHO = True
 
 
 class ProductionConfig(Config):
     """Configuración de producción."""
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
+    SQLALCHEMY_DATABASE_URI = get_db_url()
     SQLALCHEMY_ECHO = False
     # Seguridad para cookies en producción
     JWT_COOKIE_SECURE = True
@@ -51,10 +56,7 @@ class ProductionConfig(Config):
 class TestingConfig(Config):
     """Configuración de pruebas."""
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.getenv(
-        "TEST_DATABASE_URL",
-        "sqlite:///:memory:"
-    )
+    SQLALCHEMY_DATABASE_URI = get_db_url()
     SQLALCHEMY_ECHO = False
 
 

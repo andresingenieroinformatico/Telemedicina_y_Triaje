@@ -3,7 +3,7 @@ app/models/consulta.py
 Modelo de Consulta Médica – cada visita/sesión de telemedicina.
 """
 from datetime import datetime
-from microservices.videoconferencias.app import db
+from app import db
 
 
 class Consulta(db.Model):

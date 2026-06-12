@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from marshmallow import ValidationError
 
-from microservices.videoconferencias.app import db
+from app import db
 from app.models import Medico, DisponibilidadMedico
 from app.schemas import (
     disponibilidad_schema, disponibilidades_schema,
@@ -36,7 +36,7 @@ def listar_por_medico(medico_id: int):
     )
 
 
-@require_role("MEDICO", "ADMIN")
+@require_role("MEDICO")
 @disponibilidad_bp.route("", methods=["POST"])
 def crear():
     """Registra un bloque de disponibilidad para un médico."""
@@ -75,7 +75,7 @@ def crear():
     )
 
 
-@require_role("MEDICO", "ADMIN")
+@require_role("MEDICO")
 @disponibilidad_bp.route("/<int:disponibilidad_id>", methods=["DELETE"])
 def eliminar(disponibilidad_id: int):
     """Desactiva un bloque de disponibilidad."""

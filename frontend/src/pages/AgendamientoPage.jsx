@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AgendamientoService from '../services/agendamiento.service';
 import MedicoService from '../services/medico.service';
 import PacienteService from '../services/paciente.service';
@@ -6,6 +7,7 @@ import EspecialidadService from '../services/especialidad.service';
 import { Alert, Button, Input, Select, FormGroup, Spinner, Table } from '../components/UIComponents';
 
 const AgendamientoPage = () => {
+    const navigate = useNavigate();
     const [tab, setTab] = useState('listar');
     const [agendamientos, setAgendamientos] = useState([]);
     const [medicos, setMedicos] = useState([]);
@@ -24,13 +26,40 @@ const AgendamientoPage = () => {
         motivo: '',
     });
 
+    const cargarMedicos = useCallback(async () => {
+        try {
+            const data = await MedicoService.listar();
+            setMedicos(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error('Error al cargar medicos:', err);
+        }
+    }, []);
+
+    const cargarPacientes = useCallback(async () => {
+        try {
+            const data = await PacienteService.listar();
+            setPacientes(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error('Error al cargar pacientes:', err);
+        }
+    }, []);
+
+    const cargarEspecialidades = useCallback(async () => {
+        try {
+            const data = await EspecialidadService.listar();
+            setEspecialidades(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error('Error al cargar especialidades:', err);
+        }
+    }, []);
+
     useEffect(() => {
         cargarEspecialidades();
         cargarMedicos();
         cargarPacientes();
-    }, []);
+    }, [cargarEspecialidades, cargarMedicos, cargarPacientes]);
 
-    const cargarAgendamientos = React.useCallback(async () => {
+    const cargarAgendamientos = useCallback(async () => {
         setLoading(true);
         setError('');
 
@@ -40,8 +69,12 @@ const AgendamientoPage = () => {
             if (filtros.medico_id) params.medico_id = filtros.medico_id;
             if (filtros.estado) params.estado = filtros.estado;
 
-            const data = await AgendamientoService.listar(params);
-            setAgendamientos(Array.isArray(data) ? data : []);
+            const response = await AgendamientoService.listar(params);
+            // El microservicio de agendamiento devuelve { items: [], total: ... }
+            // o { success: true, data: { items: [] } } dependiendo de tu utils.py
+            const lista = response.items || response.data?.items || (Array.isArray(response) ? response : []);
+            setAgendamientos(lista);
+            
         } catch (err) {
             const errorMsg = typeof err === 'string' ? err : err.message || 'Error al cargar agendamientos';
             setError(errorMsg);
@@ -49,33 +82,6 @@ const AgendamientoPage = () => {
             setLoading(false);
         }
     }, [filtros]);
-
-    const cargarMedicos = async () => {
-        try {
-            const data = await MedicoService.listar();
-            setMedicos(Array.isArray(data) ? data : []);
-        } catch (err) {
-            console.error('Error al cargar medicos:', err);
-        }
-    };
-
-    const cargarPacientes = async () => {
-        try {
-            const data = await PacienteService.listar();
-            setPacientes(Array.isArray(data) ? data : []);
-        } catch (err) {
-            console.error('Error al cargar pacientes:', err);
-        }
-    };
-
-    const cargarEspecialidades = async () => {
-        try {
-            const data = await EspecialidadService.listar();
-            setEspecialidades(Array.isArray(data) ? data : []);
-        } catch (err) {
-            console.error('Error al cargar especialidades:', err);
-        }
-    };
 
     useEffect(() => {
         if (tab === 'listar') cargarAgendamientos();
@@ -162,7 +168,7 @@ const AgendamientoPage = () => {
     }));
 
     const pacienteOptions = pacientes.map((p) => ({
-        label: `${p.nombre || p.nombre_usuario} (${p.numero_documento || 'N/A'})`,
+        label: `${p.nombre || 'Paciente'} (${p.correo || 'S/C'})`,
         value: p.id,
     }));
 
@@ -185,6 +191,9 @@ const AgendamientoPage = () => {
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <Button type="button" onClick={() => setTab('listar')} variant={tab === 'listar' ? 'primary' : 'secondary'}>
                         Listar agendamientos
+                    </Button>
+                    <Button type="button" onClick={() => setTab('pacientes')} variant={tab === 'pacientes' ? 'primary' : 'secondary'}>
+                        Pacientes
                     </Button>
                     <Button type="button" onClick={() => setTab('crear')} variant={tab === 'crear' ? 'primary' : 'secondary'}>
                         Crear agendamiento
@@ -235,7 +244,16 @@ const AgendamientoPage = () => {
                                     key: 'acciones',
                                     label: 'Acciones',
                                     render: (_, row) => (
-                                        <>
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                            {(row.estado === 'CONFIRMADA' || row.estado === 'EN_CURSO') && (
+                                                <Button
+                                                    variant="primary"
+                                                    onClick={() => navigate(`/videoconferencia?citaId=${row.id}`)}
+                                                    style={{ minHeight: '34px', padding: '7px 10px', fontSize: '0.82rem' }}
+                                                >
+                                                    Videoconferencia
+                                                </Button>
+                                            )}
                                             {row.estado !== 'CANCELADA' && row.estado !== 'COMPLETADA' && (
                                                 <Button
                                                     variant="danger"
@@ -245,11 +263,32 @@ const AgendamientoPage = () => {
                                                     Cancelar
                                                 </Button>
                                             )}
-                                        </>
+                                        </div>
                                     ),
                                 },
                             ]}
                             data={agendamientos}
+                        />
+                    )}
+                </FormGroup>
+            )}
+
+            {tab === 'pacientes' && (
+                <FormGroup>
+                    <h2>Pacientes registrados</h2>
+                    <p className="muted">Listado de todos los pacientes que pueden ser atendidos en la plataforma.</p>
+                    {loading ? (
+                        <Spinner label="Cargando pacientes..." />
+                    ) : (
+                        <Table
+                            columns={[
+                                { key: 'id', label: 'ID' },
+                                { key: 'nombre', label: 'Nombre' },
+                                { key: 'correo', label: 'Correo' },
+                                { key: 'telefono', label: 'Teléfono' },
+                                { key: 'edad', label: 'Edad' },
+                            ]}
+                            data={pacientes}
                         />
                     )}
                 </FormGroup>

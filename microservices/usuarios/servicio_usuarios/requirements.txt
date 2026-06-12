@@ -1,6 +1,9 @@
 Flask
 Flask-SQLAlchemy
 Flask-Migrate
-psycopg2-binary
+pg8000
 SQLAlchemy
 alembic
+gunicorn
+flask-cors
+python-dotenv
