@@ -35,31 +35,10 @@ const VideoconferenciaPage = () => {
         cargarDatosCita();
     }, [citaId]);
 
-    // Cargar Jitsi Script dinámicamente
+    // Ya no cargamos el external_api.js para evitar el límite de 5 minutos de Jitsi
     useEffect(() => {
-        const scriptId = 'jitsi-external-api';
-        if (window.JitsiMeetExternalAPI) {
-            setJitsiLoaded(true);
-            return;
-        }
-
-        const script = document.createElement('script');
-        script.id = scriptId;
-        script.src = 'https://meet.jit.si/external_api.js';
-        script.async = true;
-        script.onload = () => setJitsiLoaded(true);
-        script.onerror = () => {
-            setError("Error al cargar la librería de videoconferencia. Verifica tu conexión a internet.");
-        };
-        document.body.appendChild(script);
-
-        return () => {
-            // Limpieza al desmontar
-            if (jitsiAPI) {
-                jitsiAPI.dispose();
-            }
-        };
-    }, [jitsiAPI]);
+        setJitsiLoaded(true);
+    }, []);
 
     const handleJoin = async () => {
         if (!jitsiLoaded) {
@@ -105,30 +84,11 @@ const VideoconferenciaPage = () => {
                 const config = response.data.config_iframe;
                 
                 if (containerRef.current) {
-                    containerRef.current.innerHTML = ''; // Limpiar contenedor
+                    // Abrir la sala directamente en una nueva pestaña (bypass al límite de 5 minutos)
+                    window.open(response.data.url_acceso, '_blank', 'noopener,noreferrer');
                     
-                    const options = {
-                        roomName: config.roomName,
-                        width: '100%',
-                        height: '100%',
-                        parentNode: containerRef.current,
-                        userInfo: {
-                            displayName: displayName
-                        },
-                        configOverwrite: config.configOverwrite,
-                        interfaceConfigOverwrite: config.interfaceConfigOverwrite
-                    };
-
-                    const api = new window.JitsiMeetExternalAPI(config.domain, options);
-                    
-                    // Escuchar evento de salida de llamada
-                    api.addEventListener('videoConferenceLeft', () => {
-                        setIsInRoom(false);
-                        api.dispose();
-                        setJitsiAPI(null);
-                    });
-
-                    setJitsiAPI(api);
+                    // Guardar la URL en el estado (usamos jitsiAPI temporalmente para esto o creamos una variable nueva)
+                    setJitsiAPI({ url: response.data.url_acceso });
                     setIsInRoom(true);
                 }
             } else {
@@ -143,10 +103,7 @@ const VideoconferenciaPage = () => {
     };
 
     const handleEndCall = () => {
-        if (jitsiAPI) {
-            jitsiAPI.dispose();
-            setJitsiAPI(null);
-        }
+        setJitsiAPI(null);
         setIsInRoom(false);
     };
 
@@ -165,8 +122,6 @@ const VideoconferenciaPage = () => {
             <section className="feature-grid" style={{ gridTemplateColumns: isInRoom ? '1fr' : 'repeat(3, 1fr)' }}>
                 <article className="feature-card" style={{ gridColumn: isInRoom ? '1 / -1' : 'span 2' }}>
                     <div 
-                        id="jitsi-container" 
-                        ref={containerRef}
                         style={{ 
                             background: '#0f172a', 
                             borderRadius: '16px', 
@@ -182,8 +137,27 @@ const VideoconferenciaPage = () => {
                             border: '1px solid rgba(255,255,255,0.1)'
                         }}
                     >
-                        {!isInRoom && (
+                        <div ref={containerRef} style={{ width: '100%', height: '100%', display: isInRoom ? 'block' : 'none' }}></div>
+                        
+                        {isInRoom && (
                             <div style={{ textAlign: 'center', padding: '20px', width: '100%', maxWidth: '440px' }}>
+                                <div style={{ fontSize: '64px', marginBottom: '16px' }}>🟢</div>
+                                <h3 style={{ color: 'white', margin: '0 0 8px' }}>Consulta en Curso</h3>
+                                <p style={{ color: '#94a3b8', margin: '0 auto 24px' }}>
+                                    La videollamada ha sido abierta en una ventana segura sin límite de tiempo.
+                                </p>
+                                <Button variant="primary" onClick={() => window.open(jitsiAPI?.url, '_blank')} style={{ marginBottom: '12px' }}>
+                                    Reabrir Ventana de Jitsi
+                                </Button>
+                                <br />
+                                <Button variant="danger" onClick={handleEndCall}>
+                                    Finalizar y Salir de la Consulta
+                                </Button>
+                            </div>
+                        )}
+                        
+                        {!isInRoom && (
+                            <div style={{ textAlign: 'center', padding: '20px', width: '100%', maxWidth: '440px', position: 'absolute' }}>
                                 <div style={{ fontSize: '64px', marginBottom: '16px', animation: 'spin 4s linear infinite' }}>🌐</div>
                                 <h3 style={{ color: 'white', margin: '0 0 8px' }}>Sala de Videollamada</h3>
                                 
@@ -267,13 +241,7 @@ const VideoconferenciaPage = () => {
                 )}
             </section>
 
-            {isInRoom && (
-                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
-                    <Button variant="danger" onClick={handleEndCall}>
-                        Finalizar y Salir de la Consulta
-                    </Button>
-                </div>
-            )}
+
         </main>
     );
 };
