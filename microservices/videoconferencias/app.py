@@ -18,6 +18,9 @@ def create_app():
     db.init_app(app)
     Migrate(app, db)  # Habilita: flask db init / migrate / upgrade
 
+    with app.app_context():
+        db.create_all()
+
     app.register_blueprint(video_bp, url_prefix="/api/v1")
 
     @app.errorhandler(404)
