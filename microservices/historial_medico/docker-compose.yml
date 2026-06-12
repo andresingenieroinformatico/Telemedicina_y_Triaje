@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+
+  # ── Base de datos PostgreSQL local ──────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: historial_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB:       ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./bd-historial-medico.sql:/docker-entrypoint-initdb.d/init.sql  # carga el schema automáticamente
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── API Flask ────────────────────────────────────────────
+  api:
+    build: .
+    container_name: historial_api
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      DB_HOST: postgres          # apunta al servicio postgres del compose
+      FLASK_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - .:/app                   # hot-reload en desarrollo (quitar en producción)
+
+volumes:
+  postgres_data:

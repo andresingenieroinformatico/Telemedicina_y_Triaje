@@ -1,102 +1,144 @@
-"""
-app/routes/historial_routes.py
-Acceso y actualización del Historial Médico.
-"""
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
-
 from app import db
-from app.models  import HistorialMedico, Paciente
-from app.schemas import HistorialSchema, HistorialUpdateSchema
+from app.models import HistorialMedico
+from app.schemas import HistorialSchema, HistorialCreateSchema, HistorialUpdateSchema
 
-historial_bp = Blueprint("historiales", __name__)
+historial_bp = Blueprint("historial", __name__)
 
-_schema        = HistorialSchema()
-_update_schema = HistorialUpdateSchema()
-
-
-@historial_bp.get("/paciente/<int:paciente_id>")
+@historial_bp.post("/")
 @jwt_required()
-def obtener_historial(paciente_id):
+def crear():
     """
-    Obtener el historial médico de un paciente.
+    Crear un registro en el historial médico.
     ---
     tags: [Historial Médico]
-    security: [{Bearer: []}]
+    security:
+      - Bearer: []
     parameters:
-      - {name: paciente_id, in: path, type: integer, required: true}
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - id_paciente
+            - id_medico
+          properties:
+            id_paciente:
+              type: string
+            id_medico:
+              type: string
+            diagnostico:
+              type: string
+            tratamiento:
+              type: string
+            observaciones:
+              type: string
     responses:
-      200: {description: Historial médico completo}
-      404: {description: Paciente o historial no encontrado}
+      201:
+        description: Historial creado
     """
-    Paciente.query.get_or_404(paciente_id, description="Paciente no encontrado")
-    historial = HistorialMedico.query.filter_by(paciente_id=paciente_id).first_or_404(
-        description="Historial no encontrado"
-    )
-    return jsonify(_schema.dump(historial)), 200
-
-
-@historial_bp.put("/paciente/<int:paciente_id>")
-@jwt_required()
-def actualizar_historial(paciente_id):
-    """
-    Actualizar el historial médico de un paciente.
-    ---
-    tags: [Historial Médico]
-    security: [{Bearer: []}]
-    parameters:
-      - {name: paciente_id, in: path, type: integer, required: true}
-    responses:
-      200: {description: Historial actualizado}
-      400: {description: Datos inválidos}
-    """
-    Paciente.query.get_or_404(paciente_id, description="Paciente no encontrado")
-    historial = HistorialMedico.query.filter_by(paciente_id=paciente_id).first_or_404(
-        description="Historial no encontrado"
-    )
-
     data = request.get_json(silent=True) or {}
     try:
-        validated = _update_schema.load(data)
+        validated = HistorialCreateSchema().load(data)
     except ValidationError as e:
         return jsonify({"errores": e.messages}), 400
 
-    for campo, valor in validated.items():
-        setattr(historial, campo, valor)
-
+    historial = HistorialMedico(**validated)
+    db.session.add(historial)
     db.session.commit()
-    return jsonify(_schema.dump(historial)), 200
+    return jsonify(HistorialSchema().dump(historial)), 201
 
 
-@historial_bp.get("/<int:historial_id>/resumen")
+@historial_bp.get("/<string:id_historial>")
 @jwt_required()
-def resumen_completo(historial_id):
+def obtener(id_historial):
     """
-    Resumen completo: historial + últimas consultas + últimos signos vitales.
+    Obtener un historial médico con sus recetas.
     ---
     tags: [Historial Médico]
-    security: [{Bearer: []}]
+    security:
+      - Bearer: []
     parameters:
-      - {name: historial_id, in: path, type: integer, required: true}
+      - name: id_historial
+        in: path
+        type: string
+        required: true
     responses:
-      200: {description: Resumen integrado del paciente}
-      404: {description: Historial no encontrado}
+      200:
+        description: Historial con recetas
+      404:
+        description: No encontrado
     """
-    from app.schemas import ConsultaSchema, SignosVitalesSchema, PacienteSchema
+    from app.schemas import RecetaSchema
+    h = HistorialMedico.query.get_or_404(id_historial, description="Historial no encontrado")
+    result = HistorialSchema().dump(h)
+    result["recetas"] = RecetaSchema(many=True).dump(h.recetas.all())
+    return jsonify(result), 200
 
-    historial = HistorialMedico.query.get_or_404(historial_id, description="Historial no encontrado")
-    paciente  = historial.paciente
 
-    ultimas_consultas = historial.consultas.order_by(
-        db.text("fecha_consulta DESC")
-    ).limit(5).all()
+@historial_bp.put("/<string:id_historial>")
+@jwt_required()
+def actualizar(id_historial):
+    """
+    Actualizar un registro del historial médico.
+    ---
+    tags: [Historial Médico]
+    security:
+      - Bearer: []
+    parameters:
+      - name: id_historial
+        in: path
+        type: string
+        required: true
+      - in: body
+        name: body
+        schema:
+          type: object
+          properties:
+            diagnostico:
+              type: string
+            tratamiento:
+              type: string
+            observaciones:
+              type: string
+    responses:
+      200:
+        description: Historial actualizado
+    """
+    h = HistorialMedico.query.get_or_404(id_historial, description="Historial no encontrado")
+    data = request.get_json(silent=True) or {}
+    try:
+        validated = HistorialUpdateSchema().load(data)
+    except ValidationError as e:
+        return jsonify({"errores": e.messages}), 400
+    for campo, valor in validated.items():
+        setattr(h, campo, valor)
+    db.session.commit()
+    return jsonify(HistorialSchema().dump(h)), 200
 
-    ultimos_signos = historial.signos.limit(5).all()
 
-    return jsonify({
-        "paciente":        PacienteSchema().dump(paciente),
-        "historial":       _schema.dump(historial),
-        "ultimas_consultas": ConsultaSchema(many=True).dump(ultimas_consultas),
-        "ultimos_signos":    SignosVitalesSchema(many=True).dump(ultimos_signos),
-    }), 200
+@historial_bp.delete("/<string:id_historial>")
+@jwt_required()
+def eliminar(id_historial):
+    """
+    Eliminar un registro del historial.
+    ---
+    tags: [Historial Médico]
+    security:
+      - Bearer: []
+    parameters:
+      - name: id_historial
+        in: path
+        type: string
+        required: true
+    responses:
+      200:
+        description: Historial eliminado
+    """
+    h = HistorialMedico.query.get_or_404(id_historial, description="Historial no encontrado")
+    db.session.delete(h)
+    db.session.commit()
+    return jsonify({"mensaje": "Historial eliminado correctamente"}), 200
