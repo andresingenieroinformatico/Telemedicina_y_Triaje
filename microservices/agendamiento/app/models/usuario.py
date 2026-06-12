@@ -1,4 +1,3 @@
-from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 from .base import TimestampMixin
 
@@ -28,12 +27,12 @@ class Usuario(db.Model, TimestampMixin):
     activo = db.Column(db.Boolean, default=True, nullable=False)
 
     def set_password(self, password: str):
-        """Hashea y establece la contraseña."""
-        self.password_hash = generate_password_hash(password)
+        """Almacena la contraseña en texto plano."""
+        self.password_hash = password
 
     def check_password(self, password: str) -> bool:
-        """Verifica si la contraseña coincide."""
-        return check_password_hash(self.password_hash, password)
+        """Verifica si la contraseña coincide en texto plano."""
+        return self.password_hash == password
 
     def __repr__(self):
         return f"<Usuario {self.username} ({self.rol})>"

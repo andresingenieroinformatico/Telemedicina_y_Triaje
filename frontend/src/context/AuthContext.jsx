@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
         try {
             setLoading(true);
             setError(null);
-            const response = await AuthService.login(username, password);
+            const response = await AuthService.login(username, password, role);
             const userRole = role || response.user_info?.role || response.role || 'paciente';
 
             if (response.access_token) {
