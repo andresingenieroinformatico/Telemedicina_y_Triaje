@@ -1,9 +1,15 @@
+<<<<<<< Updated upstream
 ﻿FROM python:3.12-slim AS builder
 WORKDIR /install
+=======
+# Usa una imagen base oficial de Python
+FROM python:3.11-slim
+>>>>>>> Stashed changes
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+<<<<<<< Updated upstream
 RUN apt-get update \
     && apt-get install -y --no-install-recommends build-essential libpq-dev gcc \
     && rm -rf /var/lib/apt/lists/*
@@ -35,3 +41,12 @@ ENV FLASK_APP=run.py
 
 EXPOSE 5000
 ENTRYPOINT ["./scripts/start.sh"]
+=======
+# Expone el puerto en el que se ejecutará la aplicación
+EXPOSE 5000
+
+RUN chmod +x ./scripts/start.sh
+
+# Comando para iniciar el servicio mediante el script de arranque
+CMD ["/bin/sh", "./scripts/start.sh"]
+>>>>>>> Stashed changes
