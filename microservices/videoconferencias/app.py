@@ -1,6 +1,8 @@
 import os
 from flask import Flask
+from flask_migrate import Migrate
 from flask_cors import CORS
+from config import Config, db
 from routes import video_bp
 
 
@@ -8,9 +10,12 @@ def create_app():
     app = Flask(__name__)
 
     # Permitir peticiones desde el frontend (CORS)
-    CORS(app)
+    CORS(app, supports_credentials=True)
 
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key")
+
+    db.init_app(app)
+    Migrate(app, db)  # Habilita: flask db init / migrate / upgrade
 
     app.register_blueprint(video_bp, url_prefix="/api/v1")
 
@@ -32,7 +37,6 @@ def create_app():
 # Expose app at module level for gunicorn (gunicorn app:app)
 app = create_app()
 
-
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5004))
-    app.run(debug=False, host="0.0.0.0", port=port)
+    app.run(debug=True, host="0.0.0.0", port=port)

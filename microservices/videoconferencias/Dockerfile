@@ -9,4 +9,4 @@ COPY . .
 
 EXPOSE 5004
 
-CMD ["python", "app.py"]
+CMD ["sh", "-c", "gunicorn -b 0.0.0.0:${PORT:-5004} 'app:create_app()'"]

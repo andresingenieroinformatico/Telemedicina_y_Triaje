@@ -14,8 +14,10 @@ import './App.css';
 setupAxiosInterceptors();
 
 const patientModules = [
-    { title: 'Agendamientos', description: 'Reserva, consulta y administra tus citas medicas.', path: '/agendamientos' },
-    { title: 'Historial medico', description: 'Consulta antecedentes, signos vitales y evolucion.', path: '/historial-medico' },
+    { title: 'Agendamiento', description: 'Reserva citas médicas o consulta tus pendientes.', path: '/agendamientos' },
+    { title: 'Triaje Médico', description: 'Realiza tu autoevaluación de salud antes de la cita.', path: '/triage' },
+    { title: 'Historial Médico', description: 'Consulta antecedentes, signos vitales y evolución.', path: '/historial-medico' },
+    { title: 'Videoconferencia', description: 'Accede a tu consulta médica virtual.', path: '/videoconferencia' }
 ];
 
 const doctorModules = [
@@ -127,7 +129,7 @@ function PublicLanding() {
 
 function HomePage() {
     const { isAuthenticated, user } = useAuth();
-    const modules = user?.role?.toLowerCase() === 'medico' ? doctorModules : patientModules;
+    const modules = user?.rol?.toLowerCase() === 'medico' ? doctorModules : patientModules;
 
     if (isAuthenticated) {
         return (
@@ -135,7 +137,7 @@ function HomePage() {
                 <section className="hero-card welcome-hero" aria-labelledby="welcome-title">
                     <p className="eyebrow" style={{ color: '#175cd3' }}>Centro operativo</p>
                     <h1 id="welcome-title">
-                        Hola, {user?.nombre || user?.username || 'usuario'}. {user?.role?.toLowerCase() === 'medico' ? 'Tu panel médico está listo.' : 'Tu portal de salud está listo.'}
+                        Hola, {user?.nombre || user?.username || 'usuario'}. {user?.rol?.toLowerCase() === 'medico' ? 'Tu panel médico está listo.' : 'Tu portal de salud está listo.'}
                     </h1>
                     <p className="muted">
                         Continua con citas, triage y seguimiento clinico desde una interfaz clara, rapida y confiable.
@@ -162,7 +164,7 @@ function HomePage() {
 function Navigation() {
     const { isAuthenticated, user, logout } = useAuth();
     const navigate = useNavigate();
-    const modules = user?.role?.toLowerCase() === 'medico' ? doctorModules : patientModules;
+    const modules = user?.rol?.toLowerCase() === 'medico' ? doctorModules : patientModules;
 
     const handleLogout = async () => {
         await logout();
@@ -243,7 +245,7 @@ function MainApp() {
                     <Route
                         path="/videoconferencia"
                         element={
-                            <ProtectedRoute allowedRoles={['medico']}>
+                            <ProtectedRoute allowedRoles={['paciente', 'medico']}>
                                 <VideoconferenciaPage />
                             </ProtectedRoute>
                         }

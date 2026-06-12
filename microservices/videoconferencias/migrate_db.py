@@ -15,16 +15,13 @@ Es seguro correrlo varias veces (usa ADD COLUMN IF NOT EXISTS).
 
 import os
 import sys
-from sqlalchemy import text
 
-# Asegurar que el directorio raíz del proyecto esté en el path para importaciones
-current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.abspath(os.path.join(current_dir, "../../"))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
+# Asegurar que los módulos locales sean encontrados
+sys.path.insert(0, os.path.dirname(__file__))
 
 from app import create_app
 from config import db
+from sqlalchemy import text
 
 # ─── Columnas a agregar ───────────────────────────────────────────────────────
 MIGRATIONS = [
