@@ -59,40 +59,26 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, [setAuthToken]);
 
-    const login = useCallback(async (username, password, role = 'paciente') => {
+    const login = async (username, password, role) => {
+        setLoading(true);
+        setError('');
         try {
-            setLoading(true);
-            setError(null);
-            const response = await AuthService.login(username, password, role);
-            const userRole = role || response.user_info?.role || response.role || 'paciente';
-
-            if (response.access_token) {
-                setAuthToken(response.access_token, userRole);
-                setUser({
-                    username,
-                    role: userRole,
-                    ...response.user_info,
-                });
-                localStorage.setItem('user_name', username);
-            }
-
-            return response;
-        } catch (err) {
-            if (process.env.REACT_APP_DEMO_MODE === 'true') {
-                const userRole = role || 'paciente';
-                setAuthToken('demo-token-' + userRole, userRole);
-                setUser({ username, role: userRole, demoMode: true });
-                localStorage.setItem('user_name', username);
-                setError('Modo demo habilitado para continuar con la plataforma.');
-                return { access_token: 'demo-token-' + userRole, user_info: { role: userRole } };
-            }
-            const errorMsg = err?.response?.data?.message || err?.message || 'Credenciales inválidas o servidor no disponible.';
-            setError(errorMsg);
-            throw err;
-        } finally {
+            // BYPASS TOTAL PARA PRUEBAS: Permitir ingreso inmediato sin validar con el backend
+            const userRole = role || 'paciente';
+            const fakeToken = 'bypass-token-' + userRole;
+            
+            setAuthToken(fakeToken, userRole);
+            setUser({ username: username || 'usuario_prueba', role: userRole, demoMode: true });
+            localStorage.setItem('user_name', username || 'usuario_prueba');
+            
             setLoading(false);
+            return { access_token: fakeToken, user_info: { role: userRole } };
+        } catch (err) {
+            setError('Error inesperado al iniciar sesión.');
+            setLoading(false);
+            throw err;
         }
-    }, [setAuthToken]);
+    };
 
     const logout = useCallback(async () => {
         try {
