@@ -1,0 +1,253 @@
+.pacientes-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.pacientes-hero-content {
+    flex: 1;
+    min-width: 300px;
+}
+
+.pacientes-hero-content h1 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+}
+
+.pacientes-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    background: linear-gradient(135deg, var(--blue), var(--cyan));
+    color: white;
+    font-size: 1rem;
+    font-weight: 800;
+    border-radius: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.search-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 14px 20px 14px 44px;
+    border: 1px solid var(--line);
+    border-radius: 30px;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-xs);
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 4px rgba(23, 92, 211, 0.15);
+    background: white;
+}
+
+.search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    pointer-events: none;
+}
+
+/* Patient Grid */
+.pacientes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+}
+
+/* Patient Card */
+.paciente-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(120%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 24px rgba(17, 24, 39, 0.04);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    overflow: hidden;
+}
+
+.paciente-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--blue), var(--cyan));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.paciente-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(17, 24, 39, 0.08);
+    border-color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.paciente-card:hover::before {
+    opacity: 1;
+}
+
+/* Avatar */
+.paciente-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.avatar-gradient {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.6rem;
+    font-weight: 800;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.paciente-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 1.25rem;
+    color: var(--ink);
+}
+
+.cedula-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--canvas-2);
+    color: var(--ink-soft);
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+}
+
+/* Details */
+.paciente-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-grow: 1;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: var(--muted);
+}
+
+.detail-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: rgba(23, 92, 211, 0.08);
+    color: var(--blue-2);
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.age-pill {
+    margin-left: auto;
+    padding: 4px 10px;
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.empty-age {
+    background: #fffbeb;
+    color: #b45309;
+    border-color: #fde68a;
+}
+
+/* Actions */
+.paciente-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px dashed var(--line);
+}
+
+.action-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-history {
+    background: rgba(23, 92, 211, 0.08);
+    color: var(--blue-2);
+}
+
+.btn-history:hover {
+    background: var(--blue);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-appointment {
+    background: rgba(14, 147, 132, 0.08);
+    color: var(--cyan);
+}
+
+.btn-appointment:hover {
+    background: var(--cyan);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 16px;
+    border: 1px dashed var(--muted-2);
+}
+
+.empty-state h3 {
+    margin-bottom: 8px;
+    color: var(--ink);
+}

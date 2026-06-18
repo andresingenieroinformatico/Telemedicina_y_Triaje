@@ -1,24 +1,28 @@
-# Usar una imagen oficial de Python ligera
+# ── Imagen base ────────────────────────────────────────────
 FROM python:3.11-slim
 
-# Evitar que Python escriba archivos .pyc y asegurar que los logs se muestren inmediatamente
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+# Evita archivos .pyc y buffering en logs
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-# Establecer el directorio de trabajo
+# Directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copiar el archivo de requerimientos
-COPY requirements.txt .
+# Instalar dependencias del sistema necesarias para psycopg2
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Instalar dependencias
+# Copiar e instalar dependencias Python
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el resto de la aplicación al contenedor
+# Copiar el código fuente
 COPY . .
 
-# Exponer el puerto
-EXPOSE 5003
+# Exponer el puerto de la API
+EXPOSE 5000
 
-# Ejecutar la app con gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5003", "run:app"]
+# Comando de inicio con Gunicorn (producción)
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--timeout", "120", "run:app"]

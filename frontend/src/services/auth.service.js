@@ -15,11 +15,12 @@ class AuthService {
         });
     }
 
-    async login(username, password) {
+    async login(username, password, role) {
         try {
             const response = await this.client.post(API_ENDPOINTS.AUTH.LOGIN, {
                 username,
                 password,
+                role,
             });
             // Guardar token en localStorage
             if (response.data.access_token) {

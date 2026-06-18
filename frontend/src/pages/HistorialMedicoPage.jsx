@@ -13,7 +13,7 @@ const HistorialMedicoPage = () => {
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
-    const isMedico = user?.rol?.toLowerCase() === 'medico' || user?.role?.toLowerCase() === 'medico';
+    const isMedico = user?.role?.toLowerCase() === 'medico';
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {

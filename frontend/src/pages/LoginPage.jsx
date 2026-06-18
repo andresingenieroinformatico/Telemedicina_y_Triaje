@@ -22,7 +22,7 @@ const LoginPage = () => {
         if (mode === 'register' && !name.trim()) newErrors.name = 'El nombre es requerido';
         if (!username.trim()) newErrors.username = 'El usuario es requerido';
         if (!password) newErrors.password = 'La contrasena es requerida';
-        if (password && password.length < 4) newErrors.password = 'La contrasena debe tener al menos 4 caracteres';
+
         if (mode === 'register' && password !== confirmPassword) newErrors.confirmPassword = 'Las contrasenas no coinciden';
 
         setErrors(newErrors);

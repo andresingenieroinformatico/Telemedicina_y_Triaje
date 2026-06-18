@@ -16,6 +16,9 @@ start "Historial Medico" cmd /k "call venv\Scripts\activate && cd microservices\
 echo Iniciando Servicio de Videoconferencias...
 start "Videoconferencias" cmd /k "call venv\Scripts\activate && cd microservices\videoconferencias && python app.py"
 
+echo Iniciando API Gateway...
+start "Gateway" cmd /k "node index.js"
+
 echo Iniciando Frontend (React)...
 start "Frontend" cmd /k "cd frontend && npm start"
 

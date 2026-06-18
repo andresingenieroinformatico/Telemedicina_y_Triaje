@@ -1,42 +1,33 @@
-"""
-app/models/paciente.py
-Modelo de Paciente – datos demográficos y de contacto.
-"""
+import uuid
 from datetime import datetime, date
+from sqlalchemy.dialects.postgresql import UUID
 from app import db
 
 
 class Paciente(db.Model):
     __tablename__ = "pacientes"
 
-    id              = db.Column(db.Integer, primary_key=True)
-    cedula          = db.Column(db.String(20),  unique=True, nullable=False, index=True)
-    nombres         = db.Column(db.String(100), nullable=False)
-    apellidos       = db.Column(db.String(100), nullable=False)
-    fecha_nacimiento= db.Column(db.Date,        nullable=False)
-    genero          = db.Column(db.String(20),  nullable=False)   # M / F / Otro
-    tipo_sangre     = db.Column(db.String(5))                      # A+, O-, etc.
-    correo          = db.Column(db.String(150), unique=True)
-    telefono        = db.Column(db.String(20))
-    direccion       = db.Column(db.String(255))
-    activo          = db.Column(db.Boolean, default=True, nullable=False)
-    creado_en       = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    actualizado_en  = db.Column(db.DateTime, default=datetime.utcnow,
-                                onupdate=datetime.utcnow, nullable=False)
+    id_paciente      = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id_usuario       = db.Column(UUID(as_uuid=True), db.ForeignKey("usuarios.id_usuario", ondelete="CASCADE"), nullable=False)
+    documento        = db.Column(db.Text, nullable=False, unique=True)
+    fecha_nacimiento = db.Column(db.Date, nullable=False)
+    genero           = db.Column(db.Text)   # M | F | otro
+    telefono         = db.Column(db.Text)
+    direccion        = db.Column(db.Text)
+    created_at       = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
-    # ── Relaciones ─────────────────────────────────────────
-    historial = db.relationship(
-        "HistorialMedico", back_populates="paciente",
-        uselist=False, cascade="all, delete-orphan"
-    )
-
-    def __repr__(self):
-        return f"<Paciente {self.cedula} – {self.nombres} {self.apellidos}>"
+    # Relaciones
+    usuario          = db.relationship("Usuario",        back_populates="paciente")
+    historiales      = db.relationship("HistorialMedico", back_populates="paciente",
+                                       cascade="all, delete-orphan", lazy="dynamic")
+    citas            = db.relationship("Cita",            back_populates="paciente",
+                                       cascade="all, delete-orphan", lazy="dynamic")
 
     @property
-    def edad(self) -> int:
+    def edad(self):
         today = date.today()
-        return (
-            today.year - self.fecha_nacimiento.year
-            - ((today.month, today.day) < (self.fecha_nacimiento.month, self.fecha_nacimiento.day))
-        )
+        fn = self.fecha_nacimiento
+        return today.year - fn.year - ((today.month, today.day) < (fn.month, fn.day))
+
+    def __repr__(self):
+        return f"<Paciente {self.documento}>"

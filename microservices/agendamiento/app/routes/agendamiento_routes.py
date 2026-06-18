@@ -3,14 +3,14 @@ Rutas del módulo de Agendamientos.
 Plataforma de Telemedicina y Triaje Automatizado.
 
 Endpoints:
-  GET    /api/v1/agendamientos                  - Listar con filtros
-  POST   /api/v1/agendamientos                  - Crear agendamiento
-  GET    /api/v1/agendamientos/<id>             - Detalle
-  PATCH  /api/v1/agendamientos/<id>/estado      - Cambiar estado
-  DELETE /api/v1/agendamientos/<id>             - Cancelar (soft)
-  GET    /api/v1/agendamientos/<id>/historial   - Historial de cambios
-  GET    /api/v1/agendamientos/slots            - Slots disponibles
-  GET    /api/v1/agendamientos/codigo/<codigo>  - Buscar por código
+    GET    /api/v1/agendamientos                  - Listar con filtros
+    POST   /api/v1/agendamientos                  - Crear agendamiento
+    GET    /api/v1/agendamientos/<id>             - Detalle
+    PATCH  /api/v1/agendamientos/<id>/estado      - Cambiar estado
+    DELETE /api/v1/agendamientos/<id>             - Cancelar (soft)
+    GET    /api/v1/agendamientos/<id>/historial   - Historial de cambios
+    GET    /api/v1/agendamientos/slots            - Slots disponibles
+    GET    /api/v1/agendamientos/codigo/<codigo>  - Buscar por código
 """
 from datetime import date
 
